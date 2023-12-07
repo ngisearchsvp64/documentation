@@ -116,7 +116,7 @@ Add a target for the final `test-[function]-svp64` binary:
 
 Add a line to the `clean` make rule:
 
-   $ rm -f $(strchr_OBJECTS) $(strchr_SVP64OBJECTS) $(strchr_BINFILES) $(strchr_ELFFILES) $(strchr_TARGET)
+    $ rm -f $(strchr_OBJECTS) $(strchr_SVP64OBJECTS) $(strchr_BINFILES) $(strchr_ELFFILES) $(strchr_TARGET)
 
 Append `$(strchr_TARGET)` to the line under the `remove` make rule.
 
