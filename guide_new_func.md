@@ -7,6 +7,8 @@
 
 ## Steps - strchr as an example
 
+### Copy `test-[function].c` from glibc
+
 From glibc, copy the test C file for the respective function
 into svp64-port directory.
 
@@ -18,7 +20,8 @@ under `string/test-strchr.c`
 
 ### Making adjustments to `test-[function].c`
 
-Add the following `#define`s:
+Add the following `#define`s after the
+`typedef CHAR *(*proto_t) (const CHAR *, int);` line:
 
     #define STRCHR_SVP64 strchr_svp64
     #define MAX_SIZE    256
@@ -29,6 +32,28 @@ Add the following `#define`s:
 
 `MAX_SIZE` is set to 256 to reduce the time taken to run the regression tests.
 
+For initial testing, it's worthwhile to disable most tests,
+and only turn a few. The C function `test_main` at the bottom of the file
+contains the tests being run.
+
+`do_test` is the function used for running a single test case, and
+has five arguments:
+
+- align (used for checking alignment to page size)
+- pos - position **(?)**
+- len - length of char array
+- seek_char - **(?)**
+- max_char - **(?)** Largest permitted character (buffer char is limited
+by performing modulo `max_char`).
+
+*TODO: Helpful to add arguments of `do_test`*
+
+In the test cases done for `memchr`, `memrchr`, `strchr`, the length argument
+is limited to 256 for reducing the time take to run tests.
+
+The `max_char` parameter is used to specify the character to match.**(?)**
+
+### `[function]_wrapper.c`
 
 Create a new `strchr_wrapper.c` C file which will interface with the glibc
 tests and access the ISACaller PowerISA+SVP64 simulator. An existing
@@ -50,7 +75,6 @@ replace `memchr` with `strchr`, and `MEMCHR` with `STRCHR`.
 and `c` are necessary (as string function continues until a null byte
 is encountered.
 - Update the code and comments of the `[FUNCTION]_SVP64`. In this case, remove
-use of `n`.
-
-- Copy `[function]_wrapper.c` and make adjustments as needed.
-- 
+use of `n`. `size_t bytes` need to be calculated using `strlen(s)` because
+the length of the string is not provided.
+- **(?)** - Copyright notice at the top needs updating...
