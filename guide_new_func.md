@@ -60,7 +60,7 @@ tests and access the ISACaller PowerISA+SVP64 simulator. An existing
 `[function]_wrapper.c` file can be used (in this example, `memchr`):
 
     (glibc-svp64)$: cp ~/src/glibc-svp64/svp64-port/memchr_wrapper.c \\
-                    ~/src/glibc-svp64/svp64-port/
+                    ~/src/glibc-svp64/svp64-port/strchr_wrapper.c
 
 ### Making adjustments to `[function]_wrapper.c`
 
@@ -78,3 +78,57 @@ is encountered.
 use of `n`. `size_t bytes` need to be calculated using `strlen(s)` because
 the length of the string is not provided.
 - **(?)** - Copyright notice at the top needs updating...
+
+### Adjusting Makefile
+
+The Makefile in `svp64-port` needs to be updated to include the new function
+test code (in this example, `strchr`).
+
+Add a new target:
+
+    strchr_TARGET	= test-strchr-svp64
+
+Below `BINDIR` variable add:
+
+    strchr_CFILES	:= support_test_main.c test-strchr.c strchr_wrapper.c
+    strchr_ASFILES := $(SVP64)/strchr_svp64.s $(SVP64)/strchr_orig_ppc64.s
+    strchr_SVP64OBJECTS := $(strchr_ASFILES:$(SVP64)/%.s=$(SVP64)/%.o)
+    strchr_OBJECTS := $(strchr_CFILES:%.c=%.o)
+    strchr_BINFILES := $(BINDIR)/strchr_svp64.bin
+    strchr_ELFFILES := $(BINDIR)/strchr_svp64.elf
+
+Add target for the `test-[function].o` object:
+
+    test-strchr.o: test-strchr.c
+    	$(CC) -c $(CFLAGS) -DMODULE_NAME=testsuite -o $@ $^
+
+Add target for generating assembly implementation of using standard PowerISA:
+
+    $(SVP64)/strchr_orig_ppc64.s: $(GLIBCDIR)/string/strchr.c
+    	$(CROSSCC) $(CROSSCFLAGS) -S -g0 -Os -DMODULE_NAME=libc -o $@ $^
+
+Append `$(strchr_TARGET)` to the `all` make rule.
+
+Add a target for the final `test-[function]-svp64` binary:
+
+    $(strchr_TARGET): $(strchr_OBJECTS) $(strchr_SVP64OBJECTS) $(strchr_ELFFILES) $(strchr_BINFILES)
+    	$(CC) -o $@ $(strchr_OBJECTS) $(LDFLAGS)
+
+Add a line to the `clean` make rule:
+
+   $ rm -f $(strchr_OBJECTS) $(strchr_SVP64OBJECTS) $(strchr_BINFILES) $(strchr_ELFFILES) $(strchr_TARGET)
+
+Append `$(strchr_TARGET)` to the line under the `remove` make rule.
+
+### `[function]_svp64.s` assembler file
+
+This file can be started by copying from existing SVP64 function, or by using
+the generated assembler using the reference implementation
+(`[function]_orig_ppc64.s`), although the generated assembler is probably more
+difficult to follow than simply writing from scratch.
+
+If copying from the `memchr` SVP64 assembler:
+
+    (glibc-svp64)$: cp ~/src/glibc-svp64/svp64-port/svp64/memchr_svp64.s \\
+                    ~/src/glibc-svp64/svp64-port/svp64/strchr_svp64.s
+
