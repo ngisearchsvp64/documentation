@@ -27,10 +27,23 @@ Add the following `#define`s after the
     #define MAX_SIZE    256
     CHAR *SIMPLE_STRCHR (const CHAR *, int, size_t);
     CHAR *STRCHR_SVP64 (const CHAR *, int, size_t);
-    IMPL (STRCHR_SVP64, 1)
-    IMPL (SIMPLE_STRCHR, 2)
 
 `MAX_SIZE` is set to 256 to reduce the time taken to run the regression tests.
+
+The `IMPL` calls will need to be modified.
+*(Do these define the functions used during the test?)*
+*(Why is there inconsistency with the upper/lower case `simple_`?)*
+
+Comment out:
+
+    IMPL (stupid_STRCHR, 0)
+    IMPL (simple_STRCHR, 0)
+    IMPL (STRCHR, 1)
+
+And add:
+
+    IMPL (STRCHR_SVP64, 1)
+    IMPL (simple_STRCHR, 2)
 
 For initial testing, it's worthwhile to disable most tests,
 and only turn a few. The C function `test_main` at the bottom of the file
@@ -132,3 +145,6 @@ If copying from the `memchr` SVP64 assembler:
     (glibc-svp64)$: cp ~/src/glibc-svp64/svp64-port/svp64/memchr_svp64.s \\
                     ~/src/glibc-svp64/svp64-port/svp64/strchr_svp64.s
 
+Modifications needed to be made:
+
+- Change `memchr` string to `strchr`.
