@@ -66,6 +66,11 @@ is limited to 256 for reducing the time take to run tests.
 
 The `max_char` parameter is used to specify the character to match.**(?)**
 
+Inside the `SIMPLE_[FUNCTION]` function, add the printf statement for debug
+and/or logging:
+
+      printf("strchr called: s: %p, c: %02x(%c)\n", s, (uint8_t)c, c);
+
 ### `[function]_wrapper.c`
 
 Create a new `strchr_wrapper.c` C file which will interface with the glibc
