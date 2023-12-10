@@ -46,3 +46,18 @@ of the available SimpleV feature set
 
 and integrate them with the glibc test
 cases.
+
+VectorCamp has done the initial work of studying glibc,
+creating wrapper code, and writing up an example function, `memchr()`,
+for Vantosh and Red to use as a template (from which the other functions were
+written up).
+
+## Documentation
+
+### Environment setup
+
+### Running existing test regressions
+
+### Creating new function implementations
+
+### Debugging function when failures occur
