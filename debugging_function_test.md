@@ -140,12 +140,15 @@ For now, the branch address must be calculated manually.
 The method for doing this:
 
 1. Run the makefile to generate `strchr_svp64.o`.
-2. Generate an assembly listing dump by running:
+2. Generate an assembly listing.
+
+Command to do so:
 
     (glibc-svp64)$: powerpc64le-linux-gnu-objdump -D svp64/strchr_svp64.o > svp64/dump_strchr.txt
 
-3. Open the file and look at where the `sv.bc` instruction starts. The dump
-section in question:
+3. Open the file and look at where the `sv.bc` instruction starts.
+
+The dump section in question:
 
     0000000000000054 <.inner>:
       54:   78 1b 6c 7c     mr      r12,r3
@@ -174,6 +177,8 @@ correspond to address `0x98`, or where the `.determine_loc` label is.
 
 5. Calculate the offset to use by subtracting the start of `sv.bc` from the
 desired address.
+
+Calculation:
 
     addr_target - addr_sv.bc = 0x98 - 0x84 = 0x14
 
