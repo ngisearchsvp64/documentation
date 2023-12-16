@@ -45,6 +45,12 @@ And add:
     IMPL (STRCHR_SVP64, 1)
     IMPL (simple_STRCHR, 2)
 
+For debugging purposes, add a printf statement as first line inside
+`SIMPLE_[FUNCTION]` function code. For `strchr` the statement is added inside
+`SIMPLE_STRCHR`:
+
+    printf("strchr called: s: %p, c: %02x(%c)\n", s, (uint8_t)c, c);
+
 For initial testing, it's worthwhile to disable most tests,
 and only turn a few. The C function `test_main` at the bottom of the file
 contains the tests being run.
