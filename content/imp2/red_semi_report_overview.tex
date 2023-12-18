@@ -1,0 +1,74 @@
+\section{Red Semiconductor Report Overview}
+
+\subsection{Red's goals}
+
+\subsubsection{Improving Simple-V spec}
+
+\begin{enumerate}
+  \item To check and improve LibreSOC's current Simple-V spec by finding/implementing
+  new features relevant to processing strings and search algorithms in general
+  (as part of NGI Search grant goals).
+\end{enumerate}
+
+An example feature which came out of this research is
+Data-Dependent Fail-First, which allows to iterate over data (in
+this context, an array of byte characters) and terminate early when
+a condition is met (hence "fail-first"), and shorten the specified
+vector length based on this early termination. This feature is very useful
+for string search and copy functions. One great example is the \texttt{strncpy}
+function, code \href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=src/openpower/decoder/isa/test_caller_svp64_ldst.py;h=4ecf534777a5e8a0178b29dbcd69a1a5e2dd14d6;hb=d9544764b1710f3807a9c0685d150a665f70b9a2#l31}{here}
+\footnote{LibreSOC openpower commit \texttt{\#d9544764...}
+(\texttt{fix vertical-first sv.bc}) is used to refer to
+SVP64 spec and code examples. Commit link
+\href{https://git.libre-soc.org/?p=openpower-isa.git;a=commit;h=d9544764b1710f3807a9c0685d150a665f70b9a2}{here}.}
+
+\subsubsection{Simple-V assistance to VectorCamp and Vantosh}
+
+
+\begin{enumerate}
+  \item Provide assistance to VectorCamp and Vantosh with currently implemented
+features of Simple-V.
+  \item To find causes and/or workarounds with code bugs due to the ISACaller
+simulator (the simulator supporting PowerISA 3.0 and implements current Simple-V
+specification).
+  \begin{enumerate}
+    \item If a bug related to the simulator is found, to create a test
+  case and submit a bug report to LibreSOC (see the \texttt{sv.bc} branching address
+  bug in \href{https://bugs.libre-soc.org/show_bug.cgi?id=1210}{bug \#1210}
+  as an example).
+    \item Current workarounds required due to binutils support lagging behind
+  current Simple-V (due to time and effort constraints in LibreSOC):
+    \begin{enumerate}
+      \item  Use original assembler instruction instead of extended mnemonics
+      when using SimpleV \texttt{sv.} prefix. Examples of extended mnemonics
+      are \texttt{nop}, \texttt{bdnz}, \texttt{subi}, etc.). Instead have to use 
+      \texttt{ori 0,0,0}, \texttt{bc 16,0,target}, \texttt{addi Rx,Ry,-value}.
+    \end{enumerate}
+    \item \texttt{sv.bc} with \texttt{BO=0} (other \texttt{BO} modes weren't tested, see
+  Figure 40. BO field encodings in section 2.4 of PowerISA 3.0 Book I
+  for the full list), has to be given a manually computed address.
+  See an example of how to this LINK TO "debugging function test"??
+  \end{enumerate}
+\end{enumerate}
+
+\subsubsection{String glibc function utilising subset of SimpleV feature set}
+
+To write implementations of several glibc string functions utilising a subset
+of the available SimpleV feature set
+
+\subsubsection{Integration into the glibc test environment}
+
+VectorCamp has done the initial work of studying glibc,
+creating wrapper code, and writing up an example function, \texttt{memchr()},
+for Vantosh and Red to use as a template (from which the other functions were
+written up).
+
+\subsubsection{Documentation}
+
+\subsubsection{Environment setup}
+
+\subsubsection{Running existing test regressions}
+
+\subsubsection{Creating new function implementations}
+
+\subsubsection{Debugging function when failures occur}
