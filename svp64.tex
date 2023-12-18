@@ -1,0 +1,169 @@
+\documentclass[a4paper,12pt]{book}
+
+\usepackage[a4paper]{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage[local]{gitinfo2}
+\usepackage{titlesec}
+\usepackage[acronym,ucmark,nomain]{glossaries}
+\usepackage[curly,sort,comma,numbers]{natbib}
+
+%compression
+\pdfminorversion=7
+\pdfcompresslevel=9
+\pdfobjcompresslevel=9
+
+\hypersetup{
+	%hyperindex=true,
+	%hyperfigures=true,
+	%pagebackref=true,
+	%backref,
+	colorlinks=true,
+	linkcolor=black,
+	anchorcolor=black,
+	citecolor=black,
+	filecolor=black,
+	menucolor=black,
+	pagecolor=black,
+	urlcolor=black,
+	%bookmarksnumbered,
+	%pdfborder=0 0 0,'
+	pdftoolbar=false,
+	pdfmenubar=false,
+	%bookmarks=false,
+	pdfproducer={VanTosh Document Template},
+	pdfcreator={VanTosh Document Creator},
+	pdfauthor={Toshaan Bharvani toshaan@vantosh.com ; Konstantinos Margaritis konstantinos@vectorcamp.gr ; Andrey Miroshnikov am@redsemiconductor.com },
+	pdftitle={SVP64 Power ISA Vector Optimisation for Search - NGI Search},
+	pdfsubject={SVP64 Power ISA Vector Optimisation for Search - NGI Search},
+	pdfkeywords={SVP64,PowerISA,Power,OpenPOWER,Search,Optimisation,Vector,NGI,NGISearch},
+}
+
+% page layout
+\geometry{top=30mm}
+\geometry{bottom=20mm}
+\geometry{left=20mm}
+\geometry{right=20mm}
+\geometry{headheight=25mm}
+\geometry{headsep=10mm}
+\geometry{foot=10mm}
+
+\renewcommand{\partname}{}
+\renewcommand{\thepart}{\Roman{part}.}
+\renewcommand{\thechapter}{\arabic{chapter}}
+\titleformat{\chapter}{\Huge\bfseries}{\thechapter.\ }{0pt}{}
+\titlespacing{\chapter}{0pt}{-15pt}{0pt}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\thesection\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\thesection\thesubsection\arabic{subsubsection}}
+
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\listfigurename}{Table of Figures}
+\renewcommand{\figurename}{Figure}
+
+\input{glossaries.tex}
+
+\begin{document}
+
+\fancypagestyle{plain}{}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0em}
+
+\begin{titlepage}
+	\begin{center}
+	\includegraphics[width=0.5\linewidth]{images/ngisearch-logo.png}\\
+	\vspace*{10mm}
+	\noindent\rule{\textwidth}{2pt}\\
+	\Large{\textbf{SVP64 Power ISA Vector Optimisation for Search}}\\
+	\includegraphics[width=75mm]{images/svp64-logo.png}\\
+	\noindent\rule{\textwidth}{2pt}\\
+	\vspace*{10mm}
+	\begin{tabular}{ccc}
+		\includegraphics[width=55mm]{images/vantosh-logo.png}				&
+		\includegraphics[width=55mm]{images/vectorcamp-logo.png}			&
+		\includegraphics[width=55mm]{images/redsemiconductor-logo.png}		\\
+		\footnotesize{\url{https://www.vantosh.com}}						&
+		\footnotesize{\url{https://www.vectorcamp.gr/}}						&
+		\footnotesize{\url{https://redsemiconductor.com/}}					\\
+	\end{tabular}
+	\vfill
+	\noindent\rule{\textwidth}{1pt}
+	\scriptsize{version : \gitFirstTagDescribe{} - revision : \gitAbbrevHash{} - date : \gitCommitterDate{}}\\
+	\vspace{5mm}
+	\scriptsize{Copyright \textcopyright\ VanTosh, VectorCamp, RED Semiconductor \the\year. All Rights Reserved.}\\
+	\end{center}
+\end{titlepage}
+
+\clearpage
+
+\pagenumbering{roman}
+
+\fancyhead{}
+\fancyhead[C]{
+	\includegraphics[width=15mm]{images/svp64-logo.png}
+}
+\fancyfoot{}
+\fancyfoot[LO,RE]{
+	\begin{tiny}
+	\thepage
+	\end{tiny}
+}
+\fancyfoot[RO,LE]{
+	\begin{tiny}
+	\gitFirstTagDescribe{} (\gitAbbrevHash{} - \gitAuthorDate{})
+	\end{tiny}
+}
+
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{2pt}
+
+\tableofcontents
+%\tableoffigures
+%\setglossarystyle{altlist}
+%\printglossary[type=\acronymtype,title=List of Definitions \& Acronyms]
+
+\clearpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0em}
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{2pt}
+
+\fancyhead{}
+\fancyhead[C]{
+	\includegraphics[width=15mm]{images/svp64-logo.png}
+}
+\fancyfoot{}
+\fancyfoot[LO,RE]{
+	\begin{tiny}
+		\thepage\ of \pageref{LastPage}	
+	\end{tiny}
+}
+\fancyfoot[C]{
+}
+\fancyfoot[RO,LE]{
+	\begin{tiny}
+		\gitFirstTagDescribe{} (\gitAbbrevHash{} - \gitAuthorDate{})
+	\end{tiny}
+}
+
+%\input{content/imp1/main.tex}
+
+\input{content/imp2/main.tex}
+
+%\input{content/imp3/main.tex}
+
+\end{document}
