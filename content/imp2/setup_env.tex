@@ -1,0 +1,67 @@
+\section{Setting up the environment for working with glibc tests}
+
+The setup script is available
+\href{https://git.vantosh.com/ngisearch/documentation/src/branch/master/shell-scripts}{here}.
+LibreSOC copy of the scripts is available
+\href{https://git.libre-soc.org/?p=dev-env-setup.git;a=tree}{here}.
+
+\subsection{Setting up the LibreSOC chroot}
+
+Create LibreSOC chroot (host system):
+
+\begin{verbatim}
+#: cd /PATH/TO/dev-env-setup
+#: ./mk-deb-chroot glibc-svp64
+#: ./cp-scripts-to-chroot glibc-svp64
+\end{verbatim}
+
+Scripts inside chroot:
+
+\begin{verbatim}
+$: schroot -c glibc-svp64
+(glibc-svp64)$: cd ~/dev-env-setup
+(glibc-svp64)$: sudo bash
+(glibc-svp64)#: ./install-hdl-apt-reqs
+(glibc-svp64)#: ./binutils-gdb-install
+(glibc-svp64)#: ./hdl-dev-repos
+(glibc-svp64)#: exit
+(glibc-svp64)$: ./ngi-search-glibc-svp64
+\end{verbatim}
+
+Each function test regression can be run by calling:
+
+\begin{verbatim}
+(glibc-svp64)$: cd ~/src/glibc-svp64/svp64-port
+(glibc-svp64)$: ./SILENCELOG='!instr_in_outs' ./test-memchr-svp64 --direct
+\end{verbatim}
+
+For no simulator log, set \texttt{SILENCELOG=1}.
+For full logging, skip setting \texttt{SILENCELOG}.
+
+The full test regression may take several days (depending on your hardware).
+So far, some tests fails. Some of the failures are due to a manually reduced
+maximum string size used in the test (which was done for the reducing the time
+take to run regressions).
+
+To save the regression results and simulator log:
+
+\begin{verbatim}
+(glibc-svp64)$: ./test-memchr-svp64 --direct >& /tmp/f
+\end{verbatim}
+
+To check for failed tests, run:
+
+\begin{verbatim}
+(glibc-svp64)$: grep "Wrong" /tmp/f
+\end{verbatim}
+
+\subsection{Generate this document}
+
+This document is written in \LaTeX{} and a PDF can be generated using provided
+shell script. The script works with the LibreSOC environment, however the
+actual \LaTeX{} document can be generate on any system.
+
+\begin{verbatim}
+(glibc-svp64)$: cd ~/dev-env-setup
+(glibc-svp64)$: ./ngi-search-docs
+\end{verbatim}
