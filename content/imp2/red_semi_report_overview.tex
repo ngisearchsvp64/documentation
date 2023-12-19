@@ -29,19 +29,20 @@ SVP64 spec and code examples. Commit link
   \item Provide assistance to VectorCamp and Vantosh with currently implemented
 features of Simple-V.
   \item To find causes and/or workarounds with code bugs due to the ISACaller
-simulator (the simulator supporting PowerISA 3.0 and implements current Simple-V
-specification).
+simulator (the simulator which supports PowerISA 3.0 and implements the current
+Simple-V specification).
   \begin{enumerate}
     \item If a bug related to the simulator is found, to create a test
   case and submit a bug report to LibreSOC (see the \texttt{sv.bc} branching address
   bug in \href{https://bugs.libre-soc.org/show_bug.cgi?id=1210}{bug \#1210}
   as an example).
-    \item Current workarounds required due to binutils support lagging behind
-  current Simple-V (due to time and effort constraints in LibreSOC):
+    \item Document current workarounds required due to binutils support lagging
+  behind current Simple-V (as a result of time/budget constraints in LibreSOC):
     \begin{enumerate}
-      \item  Use original assembler instruction instead of extended mnemonics
-      when using SimpleV \texttt{sv.} prefix. Examples of extended mnemonics
-      are \texttt{nop}, \texttt{bdnz}, \texttt{subi}, etc.). Instead have to use 
+      \item  Use of original assembler instruction required instead of
+      extended mnemonics when using SimpleV \texttt{sv.} prefix.
+      Examples of extended mnemonics are \texttt{nop}, \texttt{bdnz},
+      \texttt{subi}, etc.). Instead have to use
       \texttt{ori 0,0,0}, \texttt{bc 16,0,target}, \texttt{addi Rx,Ry,-value}.
     \end{enumerate}
     \item \texttt{sv.bc} with \texttt{BO=0} (other \texttt{BO} modes weren't tested, see
@@ -51,19 +52,32 @@ specification).
   \end{enumerate}
 \end{enumerate}
 
-\subsubsection{String glibc function utilising subset of SimpleV feature set}
+\subsubsection{Standard C function SimpleV implementations}
 
-To write implementations of several glibc string functions utilising a subset
-of the available SimpleV feature set
+To write implementations of several \texttt{glibc} string functions utilising a subset
+of the available SimpleV feature set (due to limited binutils support).
 
-\subsubsection{Integration into the glibc test environment}
+\subsubsection{Integration into the \texttt{glibc} test environment}
 
-VectorCamp has done the initial work of studying glibc,
+VectorCamp has done the initial work of studying \texttt{glibc},
 creating wrapper code, and writing up an example function, \texttt{memchr()},
 for Vantosh and Red to use as a template (from which the other functions were
 written up).
 
 \subsubsection{Documentation}
+
+Red has planned to document several critical parts of the developments for:
+reproducibility; to aid understanding; and help developers to come back to
+the code in future milestone and/or projects.
+
+The documentation involves:
+
+\begin{itemize}
+  \item Environment setup
+  \item Running existing test regressions
+  \item Creating new function implementations
+  \item Debugging function when failures occur
+\end{itemize}
 
 \subsubsection{Environment setup}
 
