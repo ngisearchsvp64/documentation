@@ -1,0 +1,234 @@
+\section{Debugging and Running Function Tests}
+
+\subsubsection{Running tests and checking if errors present}
+
+Figuring out the issue with a function is an iterative process, and may require
+looking at many different files.
+
+For this guide, \texttt{strchr} will be used (as it produced errors at the time).
+
+To start with, run compile and run the test cases:
+
+\begin{verbatim}
+(glibc-svp64)$: cd ~/src/glibc-svp64/svp64-port/
+(glibc-svp64)$: make clean
+(glibc-svp64)$: make all
+(glibc-svp64)$: SILENCELOG='!instr_in_outs' ./test-strchr-svp64 --direct \
+                >& /tmp/f
+\end{verbatim}
+
+(The \texttt{'!instr\_in\_outs'} setting for the \texttt{SILENCELOG}
+environment variable reduces the logging coming out of ISACaller,
+which usually isn't required for day-to-day testing. Full logging
+however is useful when trying to determine if the instruction
+behaviour is correct.)
+
+The test results can be found in the temporary file \texttt{f} under
+\texttt{/tmp/}. The file can be opened and inspected while the test regression
+is running (although it's best to use a lightweight text editor like
+\texttt{vim} as the file will grow quickly).
+
+To check if there were any failures without opening the test result file:
+
+\begin{verbatim}
+(glibc-svp64)$: echo $?
+\end{verbatim}
+
+The value of the \texttt{?} variable will be non-zero if there are errors. Test
+regression failures are caused by a mismatch between the reference C
+implementation of \texttt{strchr} and the Simple-V implementation.
+
+Inside the result tests file for the occurance of
+\texttt{Wrong result in function}.
+The version of \texttt{strchr\_svp64} used for this example is in git commit
+\texttt{\#9378006a}. Simple-V implementation
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s}{strchr\_svp64.s}.
+Three errors were found in the first group of tests,
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/test-strchr.c#L267}{test-strchr.c\#267}.
+
+\subsubsection{Determining causes of errors}
+
+\begin{itemize}
+  \item Incorrect value for character \textbf{c} loaded into \texttt{GPR[4]}
+\end{itemize}
+
+Looking at the intial debug printout, one can see that the give byte/character
+c is supposed to be \texttt{0xfe}, however the value being printed
+is \texttt{ffffffff}, while the value being stored in register \texttt{GPR[4]}
+is \texttt{0xfffffffffffffffe}.
+
+\begin{verbatim}
+strchr called: s: 0x7ffd93fd8ad0, c: fe
+strchr_svp64 called: s: 0x7ffd93fd8ad0, c: fe
+homeIsaDir: /home/am/src/openpower-isa/src/openpower/decoder/isa/
+bytes: 0, bytes_rem: 1
+ffffffff
+binary <_io.BytesIO object at 0x7f74e7e3f0a0>
+
+Memory:
+0x00100000:  FF 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+
+call ori ori
+read reg 4/0: 0xfffffffffffffffe
+read reg 8/0: 0x0
+write reg r(8, 8, 0) 0xfffffffffffffffe ew 64
+reg  0 00000000 00000000 00000000 00100000 fffffffffffffffe ...
+reg  8 fffffffffffffffe 00000000 00000000 00000000 00000000 ...
+\end{verbatim}
+
+Both wrapper and test C files were fixed to pass in a single byte, see
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/commit/8f1b25340ee2f108027a6f50e365d42aeb7cc939}{commit}.
+
+\begin{itemize}
+  \item Wrong return value
+\end{itemize}
+
+The failed test in question is the second one in the test regression. Can be
+found by searching for the second occurance of the term \texttt{Memory}
+(shows the full string to be tested loaded in memory, line \texttt{\#48602}),
+and by searching for the first occurance of \texttt{Wrong} term
+(the end of the test, line \texttt{\#48510}).
+
+(Given line numbers based on \texttt{SILENCELOG='!instr\_in\_outs'} value.)
+
+Start of test:
+
+\begin{verbatim}
+strchr_svp64 called: s: 0x7ff622cbd000, c: 17(^W)
+bytes: 256, bytes_rem: 0
+\end{verbatim}
+
+String loaded into memory (only first 48 bytes shown):
+
+\begin{verbatim}
+    Memory:
+    0x00100000:  20 37 4E 65 7C 93 2B 42  59 70 87 9E 36 4D 64 7B
+    0x00100010:  92 2A 41 58 6F 86 9D 35  4C 63 7A 91 29 40 57 6E
+    0x00100020:  17 9C 34 4B 62 79 90 28  3F 56 6D 84 9B 33 4A 61
+    0x00100030:  ...
+\end{verbatim}
+
+End of test:
+
+\begin{verbatim}
+return val        : 0000000000000000
+./test-strchr-svp64: Wrong result in function
+                     strchr_svp64 0x17 (nil) 0x7ff622cbd020
+\end{verbatim}
+
+The return value should be \texttt{100020}, because that's where
+the char \texttt{0x17} occurs.
+
+After looking through the instruction listings and register values in the
+results file, it was discovered that the \texttt{sv.bc} branch address
+was incorrect.
+
+Place of interest starts at line \texttt{\#26887}, most empty register
+lines ommitted).
+
+\begin{verbatim}
+call mtspr mtspr
+read reg 6/0: 0x5
+reg  0 00000000 00000000 00000000 00100020 00000017 000000e0 00000005 00000004
+reg  8 1717171717171717 0000 0000 0000 00100020 00100028 00100030 00100038
+reg 16 289079624b349c17 614a339b846d563f 9a836c553e278f78 543d268e77604932 0
+... skip reg values ...
+call bc bc
+write reg CTR 0x4
+reg  0 00000000 00000000 00000000 00100020 00000017 000000e0 00000005 00000004
+reg  8 1717171717171717 0000 0000 0000 00100020 00100028 00100030 00100038
+reg 16 289079624b349c17 614a339b846d563f 9a836c553e278f78 543d268e77604932 0
+... skip reg values ...
+call subf subf
+read reg 7/0: 0x4
+read reg 6/0: 0x5
+read reg 6/0: 0x5
+write reg r(6, 6, 0) 0x1 ew 64
+reg  0 00000000 00000000 00000000 00100020 00000017 000000e0 00000001 00000004
+reg  8 1717171717171717 0000 0000 0000 00100020 00100028 00100030 00100038
+reg 16 289079624b349c17 614a339b846d563f 9a836c553e278f78 543d268e77604932 0
+... skip reg values ...
+\end{verbatim}
+
+The \texttt{mtspr} instruction corresponds to \texttt{mfspr}
+(an extended mnemonic) listing,
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s#L108}{line \#108},
+of the assembly code.
+
+The correct behaviour is on a successful byte match (in this case
+matches \texttt{0x17} as expected) there should be a branch to line
+\texttt{\#108}, however the simulator jumps to the \texttt{subf}
+(assembly using \texttt{sub} extended mnemonic),
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s#L112}{line \#112}.
+
+Turns out the manual \texttt{sv.bc} branch address wasn't update after
+copying assembler from existing function.
+Due to binutils not fully supporting \texttt{sv.bc}, an incorrect
+branch address is generated when a label is given in the assembly file.
+
+For now, the branch address must be calculated manually.
+The method for doing this:
+
+\begin{itemize}
+  \item Run the makefile to generate \texttt{strchr\_svp64.o}.
+  \item Generate an assembly listing.
+\end{itemize}
+
+Command to do so:
+
+\begin{verbatim}
+(glibc-svp64)$: powerpc64le-linux-gnu-objdump -D svp64/strchr_svp64.o \
+                > svp64/dump_strchr.txt
+\end{verbatim}
+
+
+\begin{itemize}
+  \item Open the file and look at where the \texttt{sv.bc} instruction starts.
+\end{itemize}
+
+The dump section in question:
+
+\begin{verbatim}
+0000000000000054 <.inner>:
+  54:   78 1b 6c 7c     mr      r12,r3
+  ... skip instructions ...
+  84:   00 20 40 05     .long 0x5402000
+  88:   1c 00 02 40     bdnzf   eq,a4 <.determine_loc+0xc>
+  ... skip instructions ...
+
+0000000000000098 <.determine_loc>:
+  98:   a6 02 e9 7c     mfctr   r7
+  9c:   04 00 c0 38     li      r6,4
+  a0:   50 30 c7 7c     subf    r6,r7,r6
+  a4:   00 00 26 2c     cmpdi   r6,0
+  ... skip instructions ...
+\end{verbatim}
+
+The \texttt{sv.bc} instruction starts at address \texttt{0x84}, because
+the prefix is included as part of the instruction for the calculation of the
+relative branch address.
+
+The branch address shown by the object dump (\texttt{0xa4}) is 4 bytes higher
+than the actual branch address taken (during simulation, the branch jumps to
+where the \texttt{subf} instruction occurs, address \texttt{0xa0}.
+
+
+\begin{itemize}
+  \item Find the desired address to jump to. Looking at the object dump,
+  this will correspond to address \texttt{0x98}, or where the
+\texttt{.determine\_loc} label is.
+  \item Calculate the offset to use by subtracting the start of \texttt{sv.bc}
+  from the desired address.
+\end{itemize}
+
+Calculation:
+
+\begin{verbatim}
+addr_target - addr_sv.bc = 0x98 - 0x84 = 0x14
+\end{verbatim}
+
+Thus the \texttt{target\_address} parameter in \texttt{sv.bc}
+(last argument) needs to be changed to {0x14}.
+
+The code has been fixed in this
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/commit/2d2c0f70dc5cca10a1c5d92d726406903f9e5b23}{commit}.
