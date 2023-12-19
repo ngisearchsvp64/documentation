@@ -1,0 +1,181 @@
+\section{\texttt{memchr} Function Breakdown}
+
+\subsection{What is \texttt{memchr}?}
+
+\begin{verbatim}
+void *memchr(const void *s, int c, size_t n);
+\end{verbatim}
+
+The function \texttt{memchr} is part of the standard C library, and can be used
+after adding an \texttt{\#include <string.h>}.
+
+\begin{verbatim}
+The memchr function locates the first occurrence of c
+(converted to an unsigned char) in the initial n characters
+(each interpreted as unsigned char) of the object pointed to by s.
+The implementation shall behave as if it reads the characters sequentially
+and stops as soon as a matching character is found.
+
+The memchr function returns a pointer to the located character,
+or a null pointer if the character does not occur in the object.
+\end{verbatim}
+
+To summarise: find the first occurance of unsigned char \texttt{c} in the
+array of chars pointed to by \texttt{s}. No match returns a null.
+
+\subsection{\texttt{memchr\_wrapper.c} - C wrapper to interface glibc test with SVP64 code}
+
+Source code for \texttt{memchr\_wrapper.c} can be found in the
+\texttt{glibc-svp64} repo, path is:
+\begin{verbatim}
+svp64-port/memchr_wrapper.c
+\end{verbatim}
+
+This wrapper file defines a wrapper function \texttt{MEMCHR\_SVP64()} with the
+same input arguments as standard \texttt{memchr()}, but also includes
+register setup and call to \texttt{pypowersim} which will run
+LibreSOC's \texttt{ISACaller} simulator only for
+the SVP64 \texttt{memchr} implementation.
+
+The string to be tested is copied from the native C address space, to the
+simulator's memory area (this is why during the execution of \texttt{memchr},
+a different string address will be seen, although the offsets within the
+string are the same).
+
+\subsection{\texttt{test-memchr.c} - Test regressions for \texttt{memchr}}
+
+Source code for \texttt{test-memchr.c} can be found in the
+\texttt{glibc-svp64} repo, path is:
+\begin{verbatim}
+svp64-port/test-memchr.c
+\end{verbatim}
+
+This file is copied from glibc, and requires several modifications to support
+the SVP64 implementation. See Section \ref{sec:adding_new_func},
+page \pageref{sec:adding_new_func}
+
+\subsection{\texttt{memchr\_svp64.s} - SVP64 assembler implementation of \texttt{memchr}}
+
+Source code for \texttt{memchr\_svp64.s} can be found in the
+\texttt{glibc-svp64} repo, path is:
+\begin{verbatim}
+svp64-port/svp64/memchr_svp64.s
+\end{verbatim}
+
+\subsubsection{Setup}
+
+Setup variable names (set symbol) corresponding to \acrfull{GPR} which are used
+during the algorithm.
+
+\begin{itemize}
+  \item Convience register labels: \texttt{in\_ptr}, \texttt{c}, \texttt{n},
+  \texttt{tmp}, \texttt{ctr}, \texttt{s}, \texttt{t}.
+\end{itemize}
+
+A macro is defined which takes the character to match, \texttt{c},
+and produces an 8-byte mask with 8 copies of \texttt{c}.
+This allows to compare 8 bytes of the input string at a time
+(when loading 8-bytes from memory).
+
+\begin{itemize}
+  \item Example: `c=0x17`, macro will produce the mask `0x1717171717171717`.
+\end{itemize}
+
+\subsubsection{Outer loop}
+
+\begin{enumerate}
+  \item Must determine if number of remaining chars, \texttt{n} of
+  string is zero. If so, return null (no match found).
+  \item If \texttt{n} is less than 32, proceed to the byte search part of
+  the algorithm (\texttt{.found}).
+  \item If \texttt{n} is 32 or greater, can use the SVP64 Vertical-First
+  routine, \texttt{.inner}. If this is the case, do the preamble
+  before \texttt{.inner}:
+  \begin{enumerate}
+    \item First store value of \acrshort{CTR} in \texttt{ctr}.
+    Configure the \acrshort{CTR}. \acrshort{CTR} is used to keep
+    track of loop iterations (this is standard PowerISA use,
+    not specific to SVP64). \acrshort{CTR} is also used for
+    certain conditional branch modes.
+    \item Setup \acrshort{SVSTATE} register using \texttt{setvl}.
+    \acrfull{VL} is 4 (value in \texttt{ctr}), \acrfull{VF} mode is used
+    (step over instructions before
+    incrementing \texttt{srcstep}, \texttt{dststep} to the next element).
+    For more detailed info on \acrshort{VF},
+    \href{https://libre-soc.org/openpower/sv/svstep/}{see wiki page}.
+  \end{enumerate}
+\end{enumerate}
+
+\subsubsection{Inner loop}
+
+Comprises the inner loop of the SVP64 Vertical-First algorithm.
+
+\begin{itemize}
+  \item Load doubleword (8 bytes) of the string from memory and store in 
+register starting at \texttt{s} (actual register used is \texttt{16+dststep}).
+  \item Compare byte by byte the loaded 8 bytes of the string with the matching
+char mask. If any of the 8 bytes match, the instruction will set
+the corresponding byte to \texttt{0xff} in \texttt{t}
+(starts at \texttt{GPR[32]}).
+\end{itemize}
+
+Example:
+\begin{verbatim}
+call cmpb cmpb
+read reg 16/0: 0x9715a432c157d17
+read reg 8/0: 0x1717171717171717
+read reg 32/0: 0x0
+write reg r(32, 32, 0) 0xff ew 64
+\end{verbatim}
+
+\begin{itemize}
+  \item Compare immediate value 0 with \texttt{t}. Set the \acrshort{CR} Field
+  (starting at CR Field 0). If a matching char is present in the 8-byte
+  segment of the string, \texttt{t} will have a non-zero value, thus the
+  CR Field EQ bit will be cleared. This bit will be used to determine whether
+  to branch to the end of the algorithm, or to continue.
+  \item Vectorised branch conditional. In the event of a matching byte,
+  EQ bit of CR Field will be zero, and thus a branch to \texttt{.found}
+  will occur if CTR is also non-zero.
+  \item If no matches have occurred, continue by incrementing element using
+  the \texttt{svstep} instruction. More info
+  \href{https://libre-soc.org/openpower/sv/svstep/}{here}.
+  \item Increment address stored in \texttt{in\_ptr} by 8, as the code checked
+  8 bytes of string, and now can continue on to the next portion of the string.
+  Decrement \texttt{n} by 8 as there are now 8 fewer bytes to check.
+  \item Branch back to the start of \texttt{.inner} if CTR is non-zero
+  (haven't checked all 32 bytes yet). Otherwise branch back to \texttt{.outer}
+  to determine how to continue.
+\end{itemize}
+
+\subsubsection{Found loop}
+
+This code is reached if:
+
+\begin{itemize}
+  \item There are fewer than 32 bytes to process, or,
+  \item A match has been found in \texttt{.inner} and need to determine the
+  exact byte address
+\end{itemize}
+
+The algorithm is similar to the one used in \texttt{.inner}, except that code tests
+one byte at a time. If there's an exact match, then the code returns from
+\texttt{memchr} function call.
+
+\subsubsection{Tail}
+
+If this portion of code is reached (or jumped to), then no
+match has been found. Null is returned.
+
+\subsubsection{Post-analysis issues discovered}
+
+\begin{itemize}
+  \item CTR register is decremented twice in the \texttt{inner} loop, once by
+  \texttt{sv.bc}, and again by \texttt{bdnz}.
+  This means the number of iterations is only 2 (as opposed to 4).
+  \item \texttt{svstep} third argument needs to be set to 1 to enable
+  element incrementing. Enabling this however, caused a strange issue where the
+  Effective Address (EA) used in \texttt{sv.ld} was not being changed even
+  after the value stored in \texttt{in\_ptr} was incremented by 8
+  (EA was effectively frozen for the duration of Vertical-First).
+\end{itemize}
