@@ -1,0 +1,196 @@
+\section{Guide to New SVP64 Implementation of a GLIBC Function}
+
+The directory of the glibc repo is the same as for initial environment setup:
+
+\begin{verbatim}
+(glibc-svp64)$: cd ~/src/glibc-svp64/glibc
+(glibc-svp64)$:
+\end{verbatim}
+
+\subsection{Required steps - \texttt{strchr} as an example}
+
+\subsubsection{Copy \texttt{test-[function].c} from glibc}
+
+From glibc, copy the test C file for the respective function
+into \texttt{svp64-port} directory.
+
+It should be under the function category, for example, strchr is
+under \texttt{string/test-strchr.c}:
+
+\begin{verbatim}
+(glibc-svp64)$: cp ~/src/glibc-svp64/glibc/string/test-strchr.c \
+                ~/src/glibc-svp64/svp64-port/
+\end{verbatim}
+
+\subsubsection{Making adjustments to \texttt{test-[function].c}}
+
+Add the following \texttt{\#define}'s after the
+\texttt{typedef CHAR *(*proto\_t) (const CHAR *, int);} line:
+
+\begin{verbatim}
+#define STRCHR_SVP64 strchr_svp64
+#define MAX_SIZE    256
+CHAR *SIMPLE_STRCHR (const CHAR *, int, size_t);
+CHAR *STRCHR_SVP64 (const CHAR *, int, size_t);
+\end{verbatim}
+
+\texttt{MAX\_SIZE} is set to 256 to reduce the time taken to run
+the regression tests.
+
+The \texttt{IMPL} calls will need to be modified as they define the
+functions used during the test. There was an inconsistency with the
+upper/lower case \texttt{simple\_} prefix, but that might just be a
+historical reason.
+
+Comment out:
+
+\begin{verbatim}
+IMPL (stupid_STRCHR, 0)
+IMPL (simple_STRCHR, 0)
+IMPL (STRCHR, 1)
+\end{verbatim}
+
+And add:
+
+\begin{verbatim}
+IMPL (STRCHR_SVP64, 1)
+IMPL (simple_STRCHR, 2)
+\end{verbatim}
+
+For debugging purposes, add a printf statement as first line inside
+\texttt{SIMPLE\_[FUNCTION]} function code.
+For \texttt{strchr} the statement is added inside \texttt{SIMPLE\_STRCHR}:
+
+\begin{verbatim}
+printf("strchr called: s: %p, c: %02x(%c)\n", s, (uint8_t)c, c);
+\end{verbatim}
+
+For initial testing, it's worthwhile to disable most tests,
+and only turn on a few. The C function \texttt{test\_main} at the bottom
+of the file contains the tests being run.\par
+
+\texttt{do\_test} is the function used for running a single test case, and
+has five arguments (for the \texttt{strchr)}:
+
+\begin{itemize}
+  \item \texttt{align} - byte alignment in the array
+  \item \texttt{pos} - position in the array
+  \item \texttt{len} - length of char array
+  \item \texttt{seek\_char} - when \texttt{align} and \texttt{pos} set to 0,
+  this is equal to the character the function will search for.
+  \item \texttt{max\_char} - Largest permitted character (buffer char is
+  limited by performing modulo \texttt{max\_char}).
+\end{itemize}
+
+In the test cases done for \texttt{memchr}, \texttt{memrchr}, \texttt{strchr},
+the length argument is limited to 256 for reducing the time take to run tests.
+
+Inside the \texttt{SIMPLE\_[FUNCTION]} function, add the printf statement
+for debug and/or logging:
+
+\begin{verbatim}
+printf("strchr called: s: %p, c: %02x(%c)\n", s, (uint8_t)c, c);
+\end{verbatim}
+
+\subsubsection{\texttt{[function]\_wrapper.c}}
+
+Create a new \texttt{strchr\_wrapper.c} C file which will interface with
+the glibc tests and access the ISACaller PowerISA+SVP64 simulator. An existing
+\texttt{[function]\_wrapper.c} file can be used (in this example,
+\texttt{memchr}):
+
+\begin{verbatim}
+(glibc-svp64)$: cp ~/src/glibc-svp64/svp64-port/memchr_wrapper.c \\
+                ~/src/glibc-svp64/svp64-port/strchr_wrapper.c
+\end{verbatim}
+
+\subsubsection{Making adjustments to \texttt{[function]\_wrapper.c}}
+
+Sadly this is difficult to automate (at least for now), because other than
+substituting the function name, the logic of the code may need to change.
+The general structure will however remain the same.
+
+\begin{itemize}
+  \item The easiest change to make is to replace every instance of previous
+  function name to the new one being implemented. With the current example,
+  replace \texttt{memchr} with \texttt{strchr},
+  and \texttt{MEMCHR} with \texttt{STRCHR}.
+  \item Change the input arguments of \texttt{[FUNCTION]\_SVP64}.
+  In this case, only \texttt{s} and \texttt{c} are necessary
+  (as string function continues until a null byte is encountered.
+  \item Update the code and comments of the \texttt{[FUNCTION]\_SVP64}.
+  In this case, remove use of \texttt{n}. \texttt{size\_t bytes} need to be
+  calculated using \texttt{strlen(s)} because the length of the string
+  is not provided.
+  \item - Make sure to update the copyright notice at the top.
+\end{itemize}
+
+\subsubsection{Adjusting Makefile}
+
+The Makefile in \texttt{svp64-port} needs to be updated to include the new
+function test code (in this example, \texttt{strchr}).
+
+Add a new target:
+
+\begin{verbatim}
+strchr_TARGET	= test-strchr-svp64
+\end{verbatim}
+
+Below \texttt{BINDIR} variable add:
+\begin{verbatim}
+strchr_CFILES	:= support_test_main.c test-strchr.c strchr_wrapper.c
+strchr_ASFILES := $(SVP64)/strchr_svp64.s $(SVP64)/strchr_orig_ppc64.s
+strchr_SVP64OBJECTS := $(strchr_ASFILES:$(SVP64)/%.s=$(SVP64)/%.o)
+strchr_OBJECTS := $(strchr_CFILES:%.c=%.o)
+strchr_BINFILES := $(BINDIR)/strchr_svp64.bin
+strchr_ELFFILES := $(BINDIR)/strchr_svp64.elf
+\end{verbatim}
+
+Add target for the \texttt{test-[function].o} object:
+\begin{verbatim}
+test-strchr.o: test-strchr.c
+	$(CC) -c $(CFLAGS) -DMODULE_NAME=testsuite -o $@ $^
+\end{verbatim}
+
+Add target for generating assembly implementation of using standard PowerISA:
+\begin{verbatim}
+$(SVP64)/strchr_orig_ppc64.s: $(GLIBCDIR)/string/strchr.c
+	$(CROSSCC) $(CROSSCFLAGS) -S -g0 -Os -DMODULE_NAME=libc -o $@ $^
+\end{verbatim}
+
+Append \texttt{\$(strchr\_TARGET)} to the \texttt{all} make rule.
+
+Add a target for the final \texttt{test-[function]-svp64} binary:
+\begin{verbatim}
+$(strchr_TARGET): $(strchr_OBJECTS) $(strchr_SVP64OBJECTS) $(strchr_ELFFILES) \
+$(strchr_BINFILES)
+	$(CC) -o $@ $(strchr_OBJECTS) $(LDFLAGS)
+\end{verbatim}
+
+Add a line to the \texttt{clean} make rule:
+\begin{verbatim}
+$ rm -f $(strchr_OBJECTS) $(strchr_SVP64OBJECTS) $(strchr_BINFILES) \
+$(strchr_ELFFILES) $(strchr_TARGET)
+\end{verbatim}
+
+Append \texttt{\$(strchr\_TARGET)} to the line under the \texttt{remove} make rule.
+
+\subsubsection{\texttt{[function]\_svp64.s} assembler file}
+
+This file can be started by copying from existing SVP64 function, or by using
+the generated assembler using the reference implementation
+(\texttt{[function]\_orig\_ppc64.s}), although the generated assembler is
+probably more difficult to follow than simply writing from scratch.
+
+If copying from the \texttt{memchr} SVP64 assembler:
+\begin{verbatim}
+(glibc-svp64)$: cp ~/src/glibc-svp64/svp64-port/svp64/memchr_svp64.s \\
+                ~/src/glibc-svp64/svp64-port/svp64/strchr_svp64.s
+\end{verbatim}
+
+Modifications needed to be made:
+\begin{itemize}
+  \item Change \texttt{memchr} string to \texttt{strchr}.
+  \item Make modifications based on the operation of the new function
+  (and difference in input arguments).
+\end{itemize}
