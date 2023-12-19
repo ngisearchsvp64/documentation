@@ -1,6 +1,6 @@
 \section{Debugging and Running Function Tests}
 
-\subsubsection{Running tests and checking if errors present}
+\subsection{Running tests and checking if errors present}
 
 Figuring out the issue with a function is an iterative process, and may require
 looking at many different files.
@@ -46,11 +46,10 @@ The version of \texttt{strchr\_svp64} used for this example is in git commit
 Three errors were found in the first group of tests,
 \href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/test-strchr.c#L267}{test-strchr.c\#267}.
 
-\subsubsection{Determining causes of errors}
+\subsection{Determining causes of errors}
+\label{subsec:determine_cause_err}
 
-\begin{itemize}
-  \item Incorrect value for character \textbf{c} loaded into \texttt{GPR[4]}
-\end{itemize}
+\subsubsection{Incorrect value for character \textbf{c} loaded into \texttt{GPR[4]}}
 
 Looking at the intial debug printout, one can see that the give byte/character
 c is supposed to be \texttt{0xfe}, however the value being printed
@@ -79,9 +78,7 @@ reg  8 fffffffffffffffe 00000000 00000000 00000000 00000000 ...
 Both wrapper and test C files were fixed to pass in a single byte, see
 \href{https://git.vantosh.com/ngisearch/glibc-svp64/commit/8f1b25340ee2f108027a6f50e365d42aeb7cc939}{commit}.
 
-\begin{itemize}
-  \item Wrong return value
-\end{itemize}
+\subsubsection{Wrong return value}
 
 The failed test in question is the second one in the test regression. Can be
 found by searching for the second occurance of the term \texttt{Memory}
