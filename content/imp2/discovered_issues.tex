@@ -1,0 +1,212 @@
+\section{Issues Discovered During Development}
+
+\subsection{Incorrect Next Instruction Address (NIA) in `sv.bc` branch instruction}
+
+\begin{itemize}
+  \item Raised bug on the LibreSOC bug tracker:
+  \href{https://bugs.libre-soc.org/show_bug.cgi?id=1210}{bug \#1210}
+  \item LibreSOC commit \#d9544764 which fixed this issue:
+  \href{https://git.libre-soc.org/?p=openpower-isa.git;a=commitdiff;h=d9544764b1710f3807a9c0685d150a665f70b9a2}{here}
+  \item LibreSOC unit test which demonstrated this issue:
+  \href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=src/openpower/decoder/isa/test_caller_svp64_bc.py;h=93689ded619f8fa67b455f18b122fa60220ddea1;hb=089e6d352ec57be4ab645d18ad9e95df3af0d365#l310}{here}
+\end{itemize}
+
+The SVP64 implementation of \texttt{memchr} uses the vectorised branch
+conditional instruction, \texttt{sv.bc} in the SVP64 Vertical-First
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L67}{loop}.
+
+The instruction below is the Simple-V form of the normal \texttt{bc} instruction.
+It works by checking a single bit in the \acrfull{CR}
+(see Section 2.3.1 of Book I, PowerISA v3.0C spec for more information
+on \acrshort{CR}).
+The branch is taken depending on the set \texttt{BO} mode (which may also
+involve the \acrfull{CTR} (Section 2.3.3) and the CR bit specified.
+
+\begin{verbatim}
+sv.bc               0, *2, .found
+\end{verbatim}
+
+Has a \texttt{BO=0} mode which means "Decrement the CTR, then branch
+if the decremented CTRM:63 $\neq$ 0 and CRBI=0". (See Figure 40, Section 2.4
+Branch Instructions for the full list of \texttt{BO} modes.).
+
+\texttt{CR} is split into 8 4-bit CR Fields 0-7, where every 4-bits correspond
+to (copied from Section 2.3.1 of PowerISA spec):
+
+\begin{itemize}
+  \item 0: Negative (LT), The result is negative.
+  \item 1: Positive (GT), The result is positive.
+  \item 2: Zero (EQ), The result is zero.
+  \item 3: Summary Overflow (SO)
+\end{itemize}
+
+So this instruction is supposed to branch only \textit{if}:
+
+\begin{itemize}
+  \item CTR value after decrementing is greater than zero
+  \item EQ bit of CR Field 0 (bit 2+32 of CR) is zero.
+At every consecutive iteration of the Simple-V loop (in this case,
+the Simple-V index is going up from 0 to (VL-1)), the CR Field will move up
+by 1 (i.e. CR Field 0, CR bit 2+32; CR Field 1, CR bit 6+32;
+CR Field 2, CR bit 10+32; CR Field 3, and so on).
+\end{itemize}
+
+In the context of \texttt{memchr}, the branch must occur if one of the 8 bytes
+in registers \texttt{s} (starts at \texttt{GPR[16]} increases up to
+\texttt{`GPR[19]}) contains the matching byte \texttt{c}
+(in \texttt{GPR[4]}).
+
+Before LibreSOC's ISACaller simulator was fixed, the following would occur:
+the \texttt{CR} bit will be set correctly by the compare immediate instruction
+\texttt{sv.cmpi}, but during the \texttt{sv.bc} instruction, the simulator
+will proceed to the next instruction address (\texttt{svstep})
+instead of branching to \texttt{.found}.
+
+\subsubsection{Replicating this issue}
+
+It is assumed the chroot environment has already been setup.
+
+(Using the commit \texttt{\#089e6d35} of the \texttt{openpower-isa} repo:
+\href{https://git.libre-soc.org/?p=openpower-isa.git;a=commitdiff;h=089e6d352ec57be4ab645d18ad9e95df3af0d365}{here}).
+
+\begin{verbatim}
+(glibc-svp64)$: cd ~/src/openpower-isa
+(glibc-svp64)$: git checkout 089e6d352ec57be4ab645d18ad9e95df3af0d365
+(glibc-svp64)$: make
+\end{verbatim}
+
+Running \texttt{make} will regenerate the necessary files for the simulator.
+
+To run the standalone unit test written to demonstrate the issue:
+\begin{verbatim}
+(glibc-svp64)$: cd ~/src/openpower-isa/src/openpower/decoder/isa
+(glibc-svp64)$: python3 test_caller_svp64_bc.py >& /tmp/f
+\end{verbatim}
+
+The test is called \texttt{test\_sv\_branch\_vertical\_first()}. Other tests inside
+\texttt{test\_caller\_svp64\_bc.py} could be disabled by changing the
+\texttt{test\_} prefix to something else, and they will be ignored.
+
+In the results file, the following message will be present:
+\begin{verbatim}
+FAIL: test_sv_branch_vertical_first (__main__.DecoderTestCase)
+this is a branch-vertical-first-loop demo which shows an early
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_caller_svp64_bc.py", line 341, in test_sv_branch_vertical_first
+    self.assertEqual(sim.spr('CTR'), SelectableInt(1, 64))
+AssertionError: SelectableInt(value=0x0, bits=64) !=
+                SelectableInt(value=0x1, bits=64)
+\end{verbatim}
+
+And the reason for the incorrect CTR value, is because instead of the expected
+branch, another iteration of the Simple-V loop occurs, thus
+decrementing CTR to 0.
+
+To run the \texttt{memchr} tests:
+\begin{verbatim}
+(glibc-svp64)$: cd ~/src/glibc-svp64/svp64-port/
+(glibc-svp64)$: make clean
+(glibc-svp64)$: make all
+(glibc-svp64)$: SILENCELOG='!instr_in_outs' ./test-memchr-svp64 --direct \
+                >& /tmp/f
+\end{verbatim}
+
+
+Searching for the first occurance of \texttt{Wrong}, the following is found on
+\texttt{line \#31233}:
+\begin{verbatim}
+return val        : 0000000000000000
+./test-memchr-svp64: Wrong result in function memchr_svp64 (nil) 0x7f2abc182020
+\end{verbatim}
+
+The returned value from the SVP64 implementation was 0, while the reference C
+gave 0x7f2abc182020 (the correct result).
+
+Jump to the occurance of \texttt{Memory:} which occurred before the error
+message (\texttt{line \#461}). The memory printout (only first 48 bytes shown):
+\begin{verbatim}
+Memory:
+0x00100000:  01 18 2F 46 5D 74 0C 23  3A 51 68 7F 18 2E 45 5C
+0x00100010:  73 0B 22 39 50 67 7E 16  2D 44 5B 72 0A 21 38 4F
+0x00100020:  17 7D 15 2C 43 5A 71 09  20 37 4E 65 7C 14 2B 42
+0x00100030:  ...
+\end{verbatim}
+
+(The simulator's memory address space is different from the native C,
+but the \texttt{memchr\_wrapper.c} code takes care of the conversion.)
+
+To find where the incorrect branch occurred, search for
+\texttt{9715a432c157d17} (in reverse order compared to memory print because of
+Big/Little-Endian conversion). The first occurance of this value is when
+the doubleword load \texttt{ld} is called. This corresponds to
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L64}{line \#64}
+of the \texttt{memchr} SVP64 assembler.\\
+
+The instructions called after \texttt{ld} are:
+
+- Compare bytes \texttt{sv.cmpb} (generates the mask \texttt{0xff} because
+\texttt{0x17} is the character to match for)
+- Compare immediate \texttt{sv.cmpi} (sets bit 1 (GT), and clears bit 2 (EQ),
+of CR Field 0)
+- Branch conditional (decrements CTR, tests for bit2=0, but doesn't branch)
+- Simple-V step \texttt{svstep} (branch was not taken,
+\textit{this shouldn't have happened})
+
+\subsubsection{Debugging with Python debugger}
+
+Add the following lines to \texttt{caller.py} in the
+`~/src/openpower-isa/src/openpower/decoder/isa/` directory.
+\begin{verbatim}
+import pdb; pdb.set_trace() # Add at line #15
+breakpoint()                # Add at line #2361 inside the call() method
+\end{verbatim}
+
+
+The breakpoint in \texttt{caller.py} is not necessary at first, as it will
+stop every time an instruction is called (it will take a while until the
+above scenario occurs).
+
+The main place where breakpoint should be set is in:
+
+\begin{verbatim}
+~/src/openpower-isa/src/openpower/decoder/isa/generated/svbranch.py
+\end{verbatim}
+
+after \texttt{line \#18}. This breakpoint will stop at
+every call of \texttt{sv.bc}.\\
+
+To run:
+\begin{verbatim}
+(glibc-svp64)$: cd ~/src/glibc-svp64/svp64-port/
+(glibc-svp64)$: SILENCELOG='!instr_in_outs' ./test-memchr-svp64 --direct
+\end{verbatim}
+
+The Python intepreter will stop at the very beginning of \texttt{caller.py}.
+Enter \texttt{c} (continue). The intepreter will stop at the first instance
+of \texttt{sv.bc}. Continue until the memory address in register
+\texttt{GPR[3]} is equal to \texttt{00100020}.
+After entering \texttt{c} another 4 times, the intepreter will stop at the
+call where the branch doesn't occur.\\
+
+Now the python code can be single-stepped using \texttt{n} (next) and
+\texttt{s} (step, steps into functions instead of just running
+and returning result).
+
+The pseudo-code for \texttt{sv.bc} can be stepped through,
+confirming that all the necessary conditions for the branch occur.
+Compare with the pseudo-code found in
+`~/src/openpower-isa/openpower/isa/svbranch.mdwn`,
+\href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=openpower/isa/svbranch.mdwn;h=e8b46e7700b44c6112ee2d873cc2e04b3c732370;hb=089e6d352ec57be4ab645d18ad9e95df3af0d365}{repo},
+also mirrored on the
+\href{https://libre-soc.org/openpower/isa/svbranch/}{LibreSOC wiki}.
+
+The generated pseudo-code function correctly updates the \acrfull{NIA},
+but it is later overwritten by the call to 
+\begin{verbatim}
+yield from self.do_nia(asmop, ins_name, rc_en, ffirst_hit)
+\end{verbatim}
+
+On \texttt{line \#2362} of \texttt{caller.py}. For more details of the fix,
+please see the LibreSOC
+\href{https://bugs.libre-soc.org/show_bug.cgi?id=1210}{bug 1210}.
