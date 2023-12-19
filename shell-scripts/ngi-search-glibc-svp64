@@ -1,0 +1,49 @@
+#!/bin/bash
+
+if [ "$EUID" -eq 0 ]; then
+  echo "Please run as a normal user!"
+  echo "This script is NOT intended to run as root."
+  exit
+fi
+
+echo "Please run tho following scripts beforehand:"
+echo "install-hdl-apt-reqs"
+echo "binutils-gdb-install"
+echo "hdl-dev-repos"
+
+cd /home/$USER/src/
+# Use specific version of openpower-isa used during dev
+# Commit #d9544764 - fix vertical-first sv.bc
+cd openpower-isa
+git checkout d9544764b1710f3807a9c0685d150a665f70b9a2
+sudo python3 setup.py develop
+make svanalysis
+make pywriter
+make pyfnwriter
+
+cd ../
+# Vantosh repo
+git clone https://git.vantosh.com/ngisearch/glibc-svp64.git
+# LibreSOC repo - uncomment once up
+#git clone https://git.libre-soc.org/git/glibc-svp64.git
+cd glibc-svp64
+git submodule update --init --recursive
+
+# Build glibc tests
+./buildglibc.sh
+
+# Compile the function tests
+cd svp64-port
+make all
+
+echo "SVP64 functions should now have been built."
+echo "Each function test regression can be run by calling:"
+echo "SILENCELOG='!instr_in_outs' ./test-[function]-svp64 --direct"
+echo "(For no simulator log, set SILENCELOG=1)"
+echo "(For full logging, skip SILENCELOG)"
+echo "Running full regression may take several days"
+
+echo "It is recommended to save logging to a file:"
+echo "SILENCELOG='!instr_in_outs' ./test-memchr-svp64 --direct >& /tmp/f"
+echo "And to check for failed tests, run:"
+echo "grep \"Wrong\" /tmp/f"

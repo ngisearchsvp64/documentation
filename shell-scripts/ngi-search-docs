@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ "$EUID" -eq 0 ]; then
+  echo "Please run as a normal user!"
+  echo "This script is NOT intended to run as root."
+  exit
+fi
+
+echo "Please run tho following scripts beforehand:"
+echo "install-hdl-apt-reqs"
+
+mkdir -p /home/$USER/src/
+cd /home/$USER/src/
+
+# Vantosh repo
+git clone https://git.vantosh.com/ngisearch/documentation.git
+# LibreSOC repo - uncomment once up
+#git clone https://git.libre-soc.org/git/documentation.git
+cd documentation
+make
+
+echo "Documentation ready, pdf built."
