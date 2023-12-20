@@ -1,0 +1,43 @@
+\section{IMP2 Overview - Vectorscan}
+
+\subsection{The Goal}
+
+\href{https://github.com/VectorCamp/vectorscan}{Vectorscan} is a Portable Massively parallel Regular-Expression Matcher library. It is used extensively in Intrusion Detection Systems software (like Snort, Suricata and others) and Network Security Analysis in general.
+Originally the project was forked from Intel's \href{https://github.com/intel/hyperscan}{Hyperscan} but attempts to port it to Arm (originally) were not accepted upstream. So a fork of Hyperscan was created in the form of Vectorscan, where portability is the main focus of the project.
+
+A few years later and Vectorscan is a popular project, with many external contributions. It is currently heavily developed and continuously optimized and improved. 
+At the time of writing it is ported to Arm and Power architectures. Particularly for Arm, Neon/ASIMD support is 100\% while there is ongoing work to port the code to SVE2 and the same Fat Runtime functionality as on x86 is implemented, so that the same binary can run and take advantage of SVE2 if available. 
+
+Furthermore, Loongson LSX support is under review and we are in progress of porting it to even more architectures. 
+
+Now, as part of this NGI Search project, the goal is to port it to LibreSOC and SVP64 in particular. Unfortunately, SVP64 is a Vector architecture not a SIMD one, and Vectorscan's whole codebase is designed around SIMD.
+
+The whole codebase is tailored around SIMD intrinsics and SIMD data types to the point that it is currently impossible to run it on an architecture that lacks a supported SIMD unit.
+
+So, before actual SVP64 development on Vectorscan can even begin, we have to ensure two things:
+
+\begin{enumerate}
+  \item Vectorscan can run on a SIMD-less architecture, without rewriting the whole code base.
+  \item Vectorscan has to be adapted -at least partly at first- to make it easy for a single algorithm to be ported to SVP64.
+\end{enumerate}
+
+\subsubsection{SIMD Everywhere in Vectorscan}
+
+One possible solution would be to provide scalar implementations for every SIMD intrinsic used in the project.
+While this was certainly considered and some preliminary tests were done, we decided to opt for another solution.
+
+A very popular SIMD library was used, \href{https://github.com/simd-everywhere/simde}{SIMD Everywhere/SIMDe}.
+SIMDe is a header-only library that provides fast, portable implementations of SIMD intrinsics on hardware which doesn't natively support them, such as calling SSE functions on ARM.
+
+A benefit of that approach is that it would allow Vectorscan to be not only portable to other architectures for which no SIMD support has been implemented yet, but also have a high performance.
+In case SIMD support for that architecture exists in SIMDe, then Vectorscan would take advantage of that and perform better than with a scalar-only emulation of the SIMD intrinsics.
+
+Finally, SIMDe provides an alternative backend of emulating the x86 intrinsics with native SIMD intrinsics, in order to compare performance of that and Vectorscan's own backend. This will be especially useful in finetuning performance.
+
+A Pull Request has been made and merged to \href{https://github.com/VectorCamp/vectorscan/pull/203}{Vectorscan's Github}.
+
+Support for SIMDe is now officially in Vectorscan and it has been added as part of the \href{https://buildbot-ci.vectorcamp.gr/#/grid}{Vectorscan CI pipeline}.
+
+\subsection{Vectorscan adaptation for SVP64}
+
+
