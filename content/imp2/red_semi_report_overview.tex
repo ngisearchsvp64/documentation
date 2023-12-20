@@ -40,7 +40,7 @@ Simple-V specification).
   behind current Simple-V (as a result of time/budget constraints in LibreSOC):
     \begin{enumerate}
       \item  Use of original assembler instruction required instead of
-      extended mnemonics when using SimpleV \texttt{sv.} prefix.
+      extended mnemonics when using Simple-V \texttt{sv.} prefix.
       Examples of extended mnemonics are \texttt{nop}, \texttt{bdnz},
       \texttt{subi}, etc.). Instead have to use
       \texttt{ori 0,0,0}, \texttt{bc 16,0,target}, \texttt{addi Rx,Ry,-value}.
@@ -53,10 +53,10 @@ Simple-V specification).
   \end{enumerate}
 \end{enumerate}
 
-\subsubsection{Standard C function SimpleV implementations}
+\subsubsection{Standard C function Simple-V implementations}
 
 To write implementations of several \texttt{glibc} string functions utilising a subset
-of the available SimpleV feature set (due to limited binutils support).
+of the available Simple-V feature set (due to limited binutils support).
 
 \subsubsection{Integration into the \texttt{glibc} test environment}
 
