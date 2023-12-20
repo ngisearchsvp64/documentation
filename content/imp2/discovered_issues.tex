@@ -13,7 +13,7 @@
 
 The SVP64 implementation of \texttt{memchr} uses the vectorised branch
 conditional instruction, \texttt{sv.bc} in the SVP64 Vertical-First
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L67}{loop}.
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L67}{loop}.\\
 
 The instruction below is the Simple-V form of the normal \texttt{bc} instruction.
 It works by checking a single bit in the \acrfull{CR}
@@ -28,7 +28,7 @@ sv.bc               0, *2, .found
 
 Has a \texttt{BO=0} mode which means "Decrement the CTR, then branch
 if the decremented CTRM:63 $\neq$ 0 and CRBI=0". (See Figure 40, Section 2.4
-Branch Instructions for the full list of \texttt{BO} modes.).
+Branch Instructions for the full list of \texttt{BO} modes.).\\
 
 \texttt{CR} is split into 8 4-bit CR Fields 0-7, where every 4-bits correspond
 to (copied from Section 2.3.1 of PowerISA spec):
@@ -54,7 +54,7 @@ CR Field 2, CR bit 10+32; CR Field 3, and so on).
 In the context of \texttt{memchr}, the branch must occur if one of the 8 bytes
 in registers \texttt{s} (starts at \texttt{GPR[16]} increases up to
 \texttt{`GPR[19]}) contains the matching byte \texttt{c}
-(in \texttt{GPR[4]}).
+(in \texttt{GPR[4]}).\\
 
 Before LibreSOC's ISACaller simulator was fixed, the following would occur:
 the \texttt{CR} bit will be set correctly by the compare immediate instruction
@@ -121,7 +121,7 @@ return val        : 0000000000000000
 \end{verbatim}
 
 The returned value from the SVP64 implementation was 0, while the reference C
-gave 0x7f2abc182020 (the correct result).
+gave 0x7f2abc182020 (the correct result).\\
 
 Jump to the occurance of \texttt{Memory:} which occurred before the error
 message (\texttt{line \#461}). The memory printout (only first 48 bytes shown):
@@ -134,7 +134,7 @@ Memory:
 \end{verbatim}
 
 (The simulator's memory address space is different from the native C,
-but the \texttt{memchr\_wrapper.c} code takes care of the conversion.)
+but the \texttt{memchr\_wrapper.c} code takes care of the conversion.)\\
 
 To find where the incorrect branch occurred, search for
 \texttt{9715a432c157d17} (in reverse order compared to memory print because of
@@ -145,13 +145,16 @@ of the \texttt{memchr} SVP64 assembler.\\
 
 The instructions called after \texttt{ld} are:
 
-- Compare bytes \texttt{sv.cmpb} (generates the mask \texttt{0xff} because
-\texttt{0x17} is the character to match for)
-- Compare immediate \texttt{sv.cmpi} (sets bit 1 (GT), and clears bit 2 (EQ),
-of CR Field 0)
-- Branch conditional (decrements CTR, tests for bit2=0, but doesn't branch)
-- Simple-V step \texttt{svstep} (branch was not taken,
-\textit{this shouldn't have happened})
+\begin{itemize}
+  \item Compare bytes \texttt{sv.cmpb} (generates the mask \texttt{0xff}
+        because \texttt{0x17} is the character to match for)
+  \item Compare immediate \texttt{sv.cmpi} (sets bit 1 (GT), and clears
+        bit 2 (EQ), of CR Field 0)
+  \item Branch conditional (decrements CTR, tests for bit2=0, but
+        doesn't branch)
+  \item Simple-V step \texttt{svstep} (branch was not taken,
+        \textit{this shouldn't have happened})
+\end{itemize}
 
 \subsubsection{Debugging with Python debugger}
 
@@ -162,10 +165,9 @@ import pdb; pdb.set_trace() # Add at line #15
 breakpoint()                # Add at line #2361 inside the call() method
 \end{verbatim}
 
-
 The breakpoint in \texttt{caller.py} is not necessary at first, as it will
 stop every time an instruction is called (it will take a while until the
-above scenario occurs).
+above scenario occurs).\\
 
 The main place where breakpoint should be set is in:
 
@@ -191,7 +193,7 @@ call where the branch doesn't occur.\\
 
 Now the python code can be single-stepped using \texttt{n} (next) and
 \texttt{s} (step, steps into functions instead of just running
-and returning result).
+and returning result).\\
 
 The pseudo-code for \texttt{sv.bc} can be stepped through,
 confirming that all the necessary conditions for the branch occur.
@@ -199,7 +201,7 @@ Compare with the pseudo-code found in
 `~/src/openpower-isa/openpower/isa/svbranch.mdwn`,
 \href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=openpower/isa/svbranch.mdwn;h=e8b46e7700b44c6112ee2d873cc2e04b3c732370;hb=089e6d352ec57be4ab645d18ad9e95df3af0d365}{repo},
 also mirrored on the
-\href{https://libre-soc.org/openpower/isa/svbranch/}{LibreSOC wiki}.
+\href{https://libre-soc.org/openpower/isa/svbranch/}{LibreSOC wiki}.\\
 
 The generated pseudo-code function correctly updates the \acrfull{NIA},
 but it is later overwritten by the call to 

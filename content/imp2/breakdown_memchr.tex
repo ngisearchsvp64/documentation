@@ -35,7 +35,7 @@ This wrapper file defines a wrapper function \texttt{MEMCHR\_SVP64()} with the
 same input arguments as standard \texttt{memchr()}, but also includes
 register setup and call to \texttt{pypowersim} which will run
 LibreSOC's \texttt{ISACaller} simulator only for
-the SVP64 \texttt{memchr} implementation.
+the SVP64 \texttt{memchr} implementation.\\
 
 The string to be tested is copied from the native C address space, to the
 simulator's memory area (this is why during the execution of \texttt{memchr},
