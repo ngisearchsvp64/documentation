@@ -1,0 +1,105 @@
+\section{\texttt{memrchr} Function Breakdown}
+
+\subsection{What is \texttt{memrchr}?}
+
+\begin{verbatim}
+void *memrchr(const void *s, int c, size_t n);
+\end{verbatim}
+
+This function behaves similarly to \texttt{memrchr}, but searches in reverse.
+In terms of the implementation, this requires a bit of additional arithmetic
+to start looking in reverse.\\
+
+As demonstration of SVP64, a \textit{Horizontal-First implementation is used
+instead of Vertical-First}.\\
+
+(Sections similar to \texttt{memchr} are not covered in this section.)
+
+\subsection{\texttt{memrchr\_svp64.s} - SVP64 assembler implementation of \texttt{memrchr}}
+
+Source code for \texttt{memrchr\_svp64.s} can be found in the
+\texttt{glibc-svp64} repo, path is:
+\begin{verbatim}
+svp64-port/svp64/memrchr_svp64.s
+\end{verbatim}
+
+\subsubsection{Setup}
+
+In addition to code from \texttt{memchr}, adjust \texttt{in\_ptr}
+to start at N-1 (the last char of the string).
+
+\subsubsection{Outer loop}
+
+\begin{enumerate}
+  \item Must determine if number of remaining chars, \texttt{n} of
+  string is zero. If so, return null (no match found).
+  \item If \texttt{n} is less than 32, proceed to the byte search part of
+  the algorithm (\texttt{.found}).
+  \item If \texttt{n} is 32 or greater, can use the SVP64 Horizontal-First
+  routine, \texttt{.inner}. If this is the case, do the preamble
+  before \texttt{.inner}:
+  \begin{enumerate}
+    \item Check if \texttt{n} is a multiple of 8. If not, need to check
+    several (\texttt{n} modulo 8) tail characters of the string before the
+    SVP64 routine can be used. The check routine is the one as was used in
+    \texttt{.found} (for both \texttt{memchr} and \texttt{memrchr}).
+    \item Another adjustment to \texttt{in\_ptr} is needed (decrement pointer
+    by 7) at the start of the function, because 8 bytes are being read at
+    a time in the SVP64 routine.
+    \item First store value of \acrshort{CTR} in \texttt{ctr}.
+    Configure the \acrshort{CTR}. Additional \texttt{tmp} register stores
+    \texttt{ctr+1} (needed to make sure the vectorised branch will loop
+    \texttt{ctr} times).
+  \end{enumerate}
+\end{enumerate}
+
+\subsubsection{Inner loop}
+
+Comprises the inner loop of the SVP64 Horizontal-First algorithm.
+
+\begin{itemize}
+  \item Use 4 consecutive registers (starting at \texttt{addr0} or
+  \texttt{GPR[12]}) to store \texttt{(in\_ptr)}, \texttt{(in\_ptr)-8},
+  \texttt{(in\_ptr)-16}, \texttt{(in\_ptr)-24} which will be used for
+  the Horizontal-First routine.
+  \item The instructions \texttt{sv.ld}, \texttt{sv.cmpb}, \texttt{sv.cmpi},
+  \texttt{sv.bc} function similarly to the \texttt{memchr} implementation,
+  but due the Horizontal-First mode, are done as separate batches.
+  On a match, branch to \texttt{.determine\_loc}.
+  \item If no matches have occurred, move string pointer back by 32 (as the
+  coded processed 32 bytes) and decrease \texttt{n} by 32.
+  \item Branch if \texttt{n} is now less than 32. This is required because
+  \texttt{in\_ptr} needs to be incremented by 7 (as the code will now be
+  loading bytes, not an 8-byte word. Otherwise branch back to \texttt{.outer}
+  to determine how to continue.
+\end{itemize}
+
+\subsubsection{Determine location}
+
+Use the current value of CTR to calculate which 8-byte block of chars contains
+the matching character. \texttt{in\_ptr} is adjusted accordingly.
+
+\subsubsection{Move forward by 7}
+
+At the start of \texttt{memrchr} function call, \texttt{in\_ptr} was
+moved back by 7 (to correctly read 8 bytes). Now \texttt{in\_ptr} has to be
+moved forward by 7 (because the code will now search by byte starting at the
+later byte).
+
+\subsubsection{Found loop}
+
+Almost identical to the \texttt{memchr} version, except \texttt{in\_ptr} is
+decremented (since \texttt{memrchr} searches from the end).
+
+\subsubsection{Post-analysis issues discovered}
+
+\begin{itemize}
+  \item With more time (and better understanding of the SVP64), plenty of
+  improvements can be made. That said, limited support for advanced SVP64
+  features in binutils puts a limitation on which features can be used.
+  \item The branch conditional target address is manually calculated, requiring
+  to look at the objdump of the assembler to determine the correct offset.
+  This is due to binutils calculating the wrong address. The procedure for this
+  can be found in Section \ref{subsec:determine_cause_err}
+  on page \pageref{subsec:determine_cause_err}.
+\end{itemize}
