@@ -6,7 +6,7 @@
 void *memrchr(const void *s, int c, size_t n);
 \end{verbatim}
 
-This function behaves similarly to \texttt{memrchr}, but searches in reverse.
+This function behaves similarly to \texttt{memchr}, but searches in reverse.
 In terms of the implementation, this requires a bit of additional arithmetic
 to start looking in reverse.\\
 
@@ -64,10 +64,10 @@ Comprises the inner loop of the SVP64 Horizontal-First algorithm.
   the Horizontal-First routine.
   \item The instructions \texttt{sv.ld}, \texttt{sv.cmpb}, \texttt{sv.cmpi},
   \texttt{sv.bc} function similarly to the \texttt{memchr} implementation,
-  but due the Horizontal-First mode, are done as separate batches.
+  but due to the Horizontal-First mode, are done as separate batches.
   On a match, branch to \texttt{.determine\_loc}.
   \item If no matches have occurred, move string pointer back by 32 (as the
-  coded processed 32 bytes) and decrease \texttt{n} by 32.
+  code processed 32 bytes) and decrease \texttt{n} by 32.
   \item Branch if \texttt{n} is now less than 32. This is required because
   \texttt{in\_ptr} needs to be incremented by 7 (as the code will now be
   loading bytes, not an 8-byte word. Otherwise branch back to \texttt{.outer}
