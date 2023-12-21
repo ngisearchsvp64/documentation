@@ -3,52 +3,83 @@
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
-\section{IMP2 Overview - Vectorscan}
 
-\subsection{The Goal}
+\chapter{Vectorscan}
 
-\href{https://github.com/VectorCamp/vectorscan}{Vectorscan} is a Portable Massively parallel Regular-Expression Matcher library. It is used extensively in Intrusion Detection Systems software (like Snort, Suricata and others) and Network Security Analysis in general.
-Originally the project was forked from Intel's \href{https://github.com/intel/hyperscan}{Hyperscan} but attempts to port it to Arm (originally) were not accepted upstream. So a fork of Hyperscan was created in the form of Vectorscan, where portability is the main focus of the project.
+\section{The Goal}
 
-A few years later and Vectorscan is a popular project, with many external contributions. It is currently heavily developed and continuously optimized and improved. 
-At the time of writing it is ported to Arm and Power architectures. Particularly for Arm, Neon/ASIMD support is 100\% while there is ongoing work to port the code to SVE2 and the same Fat Runtime functionality as on x86 is implemented, so that the same binary can run and take advantage of SVE2 if available. 
+\href{https://github.com/VectorCamp/vectorscan}{Vectorscan} is a Portable Massively parallel Regular-Expression Matcher library.
+It is used extensively in Intrusion Detection Systems software (like Snort, Suricata and others) and Network Security Analysis in general.
+Originally the project was forked from Intel's \href{https://github.com/intel/hyperscan}{Hyperscan}
+but attempts to port it to \acrshort{ARM} (originally) were not accepted upstream.
+So a fork of Hyperscan was created in the form of Vectorscan, where portability is the main focus of the project.
+\par
 
-Furthermore, Loongson LSX support is under review and we are in progress of porting it to even more architectures. 
+A few years later and Vectorscan is a popular project, with many external contributions.
+It is currently heavily developed and continuously optimized and improved.
+At the time of writing it is ported to \acrshort{ARM} and \acrshort{POWER} architectures.
+Particularly for \acrshort{ARM}, Neon/\acrshort{ASIMD} support is 100\%
+while there is ongoing work to port the code to \acrshort{SVE2} and the same Fat Runtime functionality as on x86 is implemented,
+so that the same binary can run and take advantage of \acrshort{SVE2} if available.
+\par
 
-Now, as part of this NGI Search project, the goal is to port it to LibreSOC and SVP64 in particular. Unfortunately, SVP64 is a Vector architecture not a SIMD one, and Vectorscan's whole codebase is designed around SIMD.
+Furthermore, Loongson \acrshort{LSX} support is under review and we are in progress of porting it to even more architectures.
+\par
 
-The whole codebase is tailored around SIMD intrinsics and SIMD data types to the point that it is currently impossible to run it on an architecture that lacks a supported SIMD unit.
+Now, as part of this \acrshort{NGI} Search project, the goal is to port it to Libre-SOC and \acrshort{SVP64} in particular.
+Unfortunately, \acrshort{SVP64} is a Vector architecture not a \acrshort{SIMD} one, and Vectorscan's whole codebase is designed around \acrshort{SIMD}.
+\par
 
-So, before actual SVP64 development on Vectorscan can even begin, we have to ensure two things:
+The whole codebase is tailored around \acrshort{SIMD} intrinsics and \acrshort{SIMD} data types to the point
+that it is currently impossible to run it on an architecture that lacks a supported \acrshort{SIMD} unit.
+\par
+
+So, before actual \acrshort{SVP64} development on Vectorscan can even begin, we have to ensure two things:
 
 \begin{enumerate}
-  \item Vectorscan can run on a SIMD-less architecture, without rewriting the whole code base.
-  \item Vectorscan has to be adapted -at least partly at first- to make it easy for a single algorithm to be ported to SVP64.
+  \item Vectorscan can run on a \acrshort{SIMD}-less architecture, without rewriting the whole code base.
+  \item Vectorscan has to be adapted -at least partly at first- to make it easy for a single algorithm to be ported to \acrshort{SVP64}.
 \end{enumerate}
 
-\subsubsection{SIMD Everywhere in Vectorscan}
+\subsection{SIMD Everywhere in Vectorscan}
 
-One possible solution would be to provide scalar implementations for every SIMD intrinsic used in the project.
+One possible solution would be to provide scalar implementations for every \acrshort{SIMD} intrinsic used in the project.
 While this was certainly considered and some preliminary tests were done, we decided to opt for another solution.
+\par
 
-A very popular SIMD library was used, \href{https://github.com/simd-everywhere/simde}{SIMD Everywhere/SIMDe}.
-SIMDe is a header-only library that provides fast, portable implementations of SIMD intrinsics on hardware which doesn't natively support them, such as calling SSE functions on ARM.
+A very popular \acrshort{SIMD} library was used, \href{https://github.com/simd-everywhere/simde}{SIMD Everywhere/SIMDe}.
+SIMDe is a header-only library that provides fast, portable implementations of \acrshort{SIMD} intrinsics on hardware which doesn't natively support them, such as calling \acrshort{SSE} functions on \acrshort{ARM}.
+\par
 
-A benefit of that approach is that it would allow Vectorscan to be not only portable to other architectures for which no SIMD support has been implemented yet, but also have a high performance.
-In case SIMD support for that architecture exists in SIMDe, then Vectorscan would take advantage of that and perform better than with a scalar-only emulation of the SIMD intrinsics.
+A benefit of that approach is that it would allow Vectorscan to be not only portable to other architectures
+for which no \acrshort{SIMD} support has been implemented yet, but also have a high performance.
+In case \acrshort{SIMD} support for that architecture exists in SIMDe,
+then Vectorscan would take advantage of that and perform better than with a scalar-only emulation of the \acrshort{SIMD} intrinsics.
+\par
 
-Finally, SIMDe provides an alternative backend of emulating the x86 intrinsics with native SIMD intrinsics, in order to compare performance of that and Vectorscan's own backend. This will be especially useful in finetuning performance.
+Finally, SIMDe provides an alternative backend of emulating the x86 intrinsics with native SIMD intrinsics,
+in order to compare performance of that and Vectorscan's own backend.
+This will be especially useful in finetuning performance.
+\par
 
 A Pull Request has been made and merged to \href{https://github.com/VectorCamp/vectorscan/pull/203}{Vectorscan's Github}.
+\par
 
-Support for SIMDe is now officially in Vectorscan and it has been added as part of the \href{https://buildbot-ci.vectorcamp.gr/#/grid}{Vectorscan CI pipeline}.
+Support for SIMDe is now officially in Vectorscan and it has been added as part of the
+\href{https://buildbot-ci.vectorcamp.gr/#/grid}{Vectorscan CI pipeline}.
+\par
 
-\subsection{Vectorscan adaptation for SVP64}
+\section{Vectorscan adaptation for SVP64}
 
-This is actually the harder part as it would need extensive refactoring of the whole codebase of Vectorscan. Thankfully we do not have to do that, as after extensive analysis of the codebase we found that we can keep the same SIMD-friendly algorithms
-and slightly modify them so that they can accomodate the changes needed for predicates/masked loads. We have adapted a single search engine from the many modules in Vectorscan. The one we decided to work on is the already refactored Noodle search algorithm.
+This is actually the harder part as it would need extensive refactoring of the whole codebase of Vectorscan.
+Thankfully we do not have to do that, as after extensive analysis of the codebase we found that we can keep the same \acrshort{SIMD}-friendly algorithms
+and slightly modify them so that they can accomodate the changes needed for predicates/masked loads.
+We have adapted a single search engine from the many modules in Vectorscan.
+The one we decided to work on is the already refactored Noodle search algorithm.
+\par
 
-Before we analyse the changes involved, let us first give an explanation of how the typical SIMD algorithm of processing a buffer of N bytes is implemented using the following pseudocode:
+Before we analyse the changes involved, let us first give an explanation of how the typical \acrshort{SIMD} algorithm
+of processing a buffer of N bytes is implemented using the following pseudocode:
 
 \begin{verbatim}
 # Buffer is at memory address buf, size N
@@ -79,22 +110,34 @@ ENDIF
 \end{verbatim}
 
 In some cases, the check for smaller sizes and the check for alignment can be merged, but the principle remains the same.
-Now the benefit of a system like SVP64 is that you can skip the Head and Tail parts of the algorithm and just have a main loop.
+Now the benefit of a system like \acrshort{SVP64} is that you can skip the Head and Tail parts of the algorithm and just have a main loop.
 However, the changes to a software like Vectorscan would have to be enormous, as it's completely tailored around SIMD architectures.
-However, SVP64 as well as at least two modern SIMD architectures, SVE/SVE2 and AVX512 support the notion of predicated/masked loads.
-In masked loads, we can use predicate masks to load a full vector on one hand until the aligned boundary, but on the other hand only process the bytes that are not masked, and skip the rest.
+However, \acrshort{SVP64} as well as at least two modern \acrshort{SIMD} architectures,
+\acrshort{SVE}/\acrshort{SVE2} and \acrshort{AVX512} support the notion of predicated/masked loads.
+In masked loads, we can use predicate masks to load a full vector on one hand until the aligned boundary,
+but on the other hand only process the bytes that are not masked, and skip the rest.
+\par
 
-This has proven to be especially convenient and it allows a simple compromise between writing a fully optimized SVP64 algorithm and providing something that will work with mostly the same code for all architectures.
-We have to remember that for a project such as Vectorscan that supports as many architectures and in the process of supporting even more, keeping things portable is of great importance while at the same time it has to ensure that performance will not be severely impacted by the decisions made.
+This has proven to be especially convenient and it allows a simple compromise between writing a fully optimized \acrshort{SVP64} algorithm
+and providing something that will work with mostly the same code for all architectures.
+We have to remember that for a project such as Vectorscan that supports as many architectures
+and in the process of supporting even more, keeping things portable is of great importance
+while at the same time it has to ensure that performance will not be severely impacted by the decisions made.
+\par
 
-We believe that this will be a good compromise, until such time that actual SVP64 hardware exists and it will be much easier to better optimize code for that.
+We believe that this will be a good compromise,
+until such time that actual \acrshort{SVP64} hardware exists and it will be much easier to better optimize code for that.
+\par
 
-Now that we have explained the changes involved, we will mention that we have changed Noodle to provide two separate code paths, one for architectures that support masked loads (such as SVP64, SVE2 and AVX512) and the other for generic SIMD architectures (like Neon, AVX2, VSX).
+Now that we have explained the changes involved, we will mention that we have changed Noodle to provide two separate code paths,
+one for architectures that support masked loads (such as \acrshort{SVP64}, \acrshort{SVE2} and \acrshort{AVX512})
+and the other for generic \acrshort{SIMD} architectures (like Neon, \acrshort{AVX2}, \acrshort{VSX}).
+\par
 
-The refactoring changes were too large to include here but everything was done in \href{https://github.com/VectorCamp/vectorscan}{Vectorscan} and in particular as part of a large Pull Request:
-
+The refactoring changes were too large to include here
+but everything was done in \href{https://github.com/VectorCamp/vectorscan}{Vectorscan} and in particular as part of a large Pull Request:
 \href{https://github.com/VectorCamp/vectorscan/pull/211}{Feature/refactor noodle masked loads \#211}
+\par
 
-We believe that these changes will make it easier to have an Noodle SVP64 implementation as part of IMP3.
-
-\clearpage
+We believe that these changes will make it easier to have an Noodle \acrshort{SVP64} implementation as part of \acrshort{IMP}3.
+\par
