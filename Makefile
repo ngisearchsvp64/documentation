@@ -1,7 +1,7 @@
 #!Makefile
 
 # SPDX-License-Identifier: LGPL-3-or-later
-# Copyright 2023 Vantosh
+# Copyright 2023 VanTosh
 #
 # Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 # https://www.ngisearch.eu/, EU Programme 101069364.
