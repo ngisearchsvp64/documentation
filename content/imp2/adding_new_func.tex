@@ -3,7 +3,8 @@
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
-\section{Guide to New SVP64 Implementation of a GLIBC Function}
+
+\chapter{Guide to New SVP64 Implementation of a glibc Function}
 \label{sec:adding_new_func}
 
 The directory of the glibc repo is the same as for initial environment setup:
@@ -12,9 +13,9 @@ The directory of the glibc repo is the same as for initial environment setup:
 (glibc-svp64)$: cd ~/src/glibc-svp64/glibc
 \end{verbatim}
 
-\subsection{Required steps - \texttt{strchr} as an example}
+\section{Required steps - \texttt{strchr} as an example}
 
-\subsubsection{Copy \texttt{test-[function].c} from glibc}
+\subsection{Copy \texttt{test-[function].c} from glibc}
 
 From glibc, copy the test C file for the respective function
 into \texttt{svp64-port} directory.
@@ -27,7 +28,7 @@ under \texttt{string/test-strchr.c}:
                 ~/src/glibc-svp64/svp64-port/
 \end{verbatim}
 
-\subsubsection{Making adjustments to \texttt{test-[function].c}}
+\subsection{Making adjustments to \texttt{test-[function].c}}
 
 Add the following \texttt{\#define}'s after the
 \texttt{typedef CHAR *(*proto\_t) (const CHAR *, int);} line:
@@ -97,7 +98,7 @@ for debug and/or logging:
 printf("strchr called: s: %p, c: %02x(%c)\n", s, (uint8_t)c, c);
 \end{verbatim}
 
-\subsubsection{\texttt{[function]\_wrapper.c}}
+\subsection{\texttt{[function]\_wrapper.c}}
 
 Create a new \texttt{strchr\_wrapper.c} C file which will interface with
 the glibc tests and access the ISACaller PowerISA+SVP64 simulator. An existing
@@ -109,7 +110,7 @@ the glibc tests and access the ISACaller PowerISA+SVP64 simulator. An existing
                 ~/src/glibc-svp64/svp64-port/strchr_wrapper.c
 \end{verbatim}
 
-\subsubsection{Making adjustments to \texttt{[function]\_wrapper.c}}
+\subsection{Making adjustments to \texttt{[function]\_wrapper.c}}
 
 Sadly this is difficult to automate (at least for now), because other than
 substituting the function name, the logic of the code may need to change.
@@ -130,7 +131,7 @@ The general structure will however remain the same.
   \item Make sure to update the copyright notice at the top.
 \end{itemize}
 
-\subsubsection{Adjusting Makefile}
+\subsection{Adjusting Makefile}
 
 The Makefile in \texttt{svp64-port} needs to be updated to include the new
 function test code (in this example, \texttt{strchr}).
@@ -180,7 +181,7 @@ $(strchr_ELFFILES) $(strchr_TARGET)
 
 Append \texttt{\$(strchr\_TARGET)} to the line under the \texttt{remove} make rule.
 
-\subsubsection{\texttt{[function]\_svp64.s} assembler file}
+\subsection{\texttt{[function]\_svp64.s} assembler file}
 
 This file can be started by copying from existing SVP64 function, or by using
 the generated assembler using the reference implementation
