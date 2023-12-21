@@ -1,10 +1,11 @@
 % SPDX-License-Identifier: LGPL-3-or-later
 % Copyright 2023 VectorCamp
 % Copyright 2023 Red Semiconductor Ltd.
-% Copyright 2023 Vantosh
+% Copyright 2023 VanTosh
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
+
 \section{\texttt{memrchr} Function Breakdown}
 
 \subsection{What is \texttt{memrchr}?}
@@ -17,7 +18,7 @@ This function behaves similarly to \texttt{memchr}, but searches in reverse.
 In terms of the implementation, this requires a bit of additional arithmetic
 to start looking in reverse.\\
 
-As demonstration of SVP64, a \textit{Horizontal-First implementation is used
+As demonstration of \acrshort{SVP64}, a \textit{Horizontal-First implementation is used
 instead of Vertical-First}.\\
 
 (Sections similar to \texttt{memchr} are not covered in this section.)
@@ -101,8 +102,8 @@ decremented (since \texttt{memrchr} searches from the end).
 \subsubsection{Post-analysis issues discovered}
 
 \begin{itemize}
-  \item With more time (and better understanding of the SVP64), plenty of
-  improvements can be made. That said, limited support for advanced SVP64
+  \item With more time (and better understanding of the \acrshort{SVP64}), plenty of
+  improvements can be made. That said, limited support for advanced \acrshort{SVP64}
   features in binutils puts a limitation on which features can be used.
   \item The branch conditional target address is manually calculated, requiring
   to look at the objdump of the assembler to determine the correct offset.
