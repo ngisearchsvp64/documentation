@@ -3,16 +3,13 @@
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
-\section{IMP2 Overview - Red Semiconductor}
 
-\subsection{Red's goals}
-
-\subsubsection{Improving Simple-V spec}
+\chapter{Improving Simple-V spec}
 
 \begin{enumerate}
-  \item To check and improve LibreSOC's current Simple-V spec by finding/implementing
+  \item To check and improve Libre-SOC's current Simple-V spec by finding/implementing
   new features relevant to processing strings and search algorithms in general
-  (as part of NGI Search grant goals).
+  (as part of \acrshort{NGI} Search grant goals).
 \end{enumerate}
 
 An example feature which came out of this research is
@@ -20,29 +17,28 @@ Data-Dependent Fail-First, which allows to iterate over data (in
 this context, an array of byte characters) and terminate early when
 a condition is met (hence "fail-first"), and shorten the specified
 vector length based on this early termination. This feature is very useful
-for string search and copy functions. One great example is the \texttt{strncpy}
-function, code \href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=src/openpower/decoder/isa/test_caller_svp64_ldst.py;h=4ecf534777a5e8a0178b29dbcd69a1a5e2dd14d6;hb=d9544764b1710f3807a9c0685d150a665f70b9a2#l31}{here}
-\footnote{LibreSOC \texttt{openpower-isa} repo commit \texttt{\#d9544764...}
+for string search and copy functions.
+One great example is the \texttt{strncpy} function,
+code \href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=src/openpower/decoder/isa/test_caller_svp64_ldst.py;h=4ecf534777a5e8a0178b29dbcd69a1a5e2dd14d6;hb=d9544764b1710f3807a9c0685d150a665f70b9a2#l31}{here}
+\footnote{Libre-SOC \texttt{openpower-isa} repo commit \texttt{\#d9544764...}
 (\texttt{fix vertical-first sv.bc}) is used to refer to
-SVP64 spec and code examples. Commit link
+\acrshort{SVP64} spec and code examples. Commit link
 \href{https://git.libre-soc.org/?p=openpower-isa.git;a=commit;h=d9544764b1710f3807a9c0685d150a665f70b9a2}{here}.}
 
-\subsubsection{Simple-V assistance to VectorCamp and Vantosh}
-
+\section{Simple-V assistance to VectorCamp and VanTosh}
 
 \begin{enumerate}
-  \item Provide assistance to VectorCamp and Vantosh with currently implemented
-features of Simple-V.
+  \item Provide assistance with currently implemented features of Simple-V.
   \item To find causes and/or workarounds with code bugs due to the ISACaller
 simulator (the simulator which supports PowerISA 3.0 and implements the current
 Simple-V specification).
   \begin{enumerate}
     \item If a bug related to the simulator is found, to create a test
-  case and submit a bug report to LibreSOC (see the \texttt{sv.bc} branching address
+  case and submit a bug report to Libre-SOC (see the \texttt{sv.bc} branching address
   bug in \href{https://bugs.libre-soc.org/show_bug.cgi?id=1210}{bug \#1210}
   as an example).
     \item Document current workarounds required due to binutils support lagging
-  behind current Simple-V (as a result of time/budget constraints in LibreSOC):
+  behind current Simple-V (as a result of time/budget constraints in Libre-SOC):
     \begin{enumerate}
       \item  Use of original assembler instruction required instead of
       extended mnemonics when using Simple-V \texttt{sv.} prefix.
@@ -58,23 +54,24 @@ Simple-V specification).
   \end{enumerate}
 \end{enumerate}
 
-\subsubsection{Standard C function Simple-V implementations}
+\section{Standard C function Simple-V implementations}
 
 To write implementations of several \texttt{glibc} string functions utilising a subset
 of the available Simple-V feature set (due to limited binutils support).
 
-\subsubsection{Integration into the \texttt{glibc} test environment}
+\section{Integration into the \texttt{glibc} test environment}
 
-VectorCamp has done the initial work of studying \texttt{glibc},
+We did the initial work of studying \texttt{glibc},
 creating wrapper code, and writing up an example function, \texttt{memchr()},
-for Vantosh and Red to use as a template (from which the other functions were
+after which we could use that as a template (from which the other functions were
 written up).
 
 \subsubsection{Documentation}
 
-Red has planned to document several critical parts of the developments for:
+We have planned to document several critical parts of the developments for:
 reproducibility; to aid understanding; and help developers to come back to
-the code in future milestone and/or projects.\\
+the code in future milestone and/or projects.
+\par
 
 The documentation includes:
 
@@ -85,27 +82,11 @@ The documentation includes:
   \item Document discovered bugs in instruction simulator
 \end{itemize}
 
-\subsection{Moving Towards IMP3}
+\section{Moving Towards IMP3}
 
-Deliverable during IMP3 will be to create a report on how SVP64 optimised
-search in the context of VectorScan and libc6. The work done so far in IMP2
-has taught all three participants more about the theoretical capabilities
-of SVP64, as well as how to create SVP64 programs. The achievements and
+Deliverable during \acrshort{IMP}3 will be to create a report on how \acrshort{SVP64} optimised
+search in the context of VectorScan and libc6. The work done so far in \acrshort{IMP}2
+has taught all participants more about the theoretical capabilities
+of \acrshort{SVP64}, as well as how to create \acrshort{SVP64} programs. The achievements and
 shortcomings will be documented, allowing the Simple-V specification to
 be adapted and improved accordingly.
-
-\clearpage
-
-\input{content/imp2/setup_env.tex}
-
-\input{content/imp2/debug_run_tests.tex}
-
-\input{content/imp2/adding_new_func.tex}
-
-\input{content/imp2/discovered_issues.tex}
-
-\input{content/imp2/breakdown_memchr.tex}
-
-\input{content/imp2/breakdown_memrchr.tex}
-
-\clearpage
