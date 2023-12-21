@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: LGPL-3-or-later
 # Copyright 2023 VectorCamp
 # Copyright 2023 Red Semiconductor Ltd.
-# Copyright 2023 Vantosh
+# Copyright 2023 VanTosh
 #
 # Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 # https://www.ngisearch.eu/, EU Programme 101069364.
@@ -30,9 +30,9 @@ make pywriter
 make pyfnwriter
 
 cd ../
-# Vantosh repo
+# VanTosh repo
 git clone https://git.vantosh.com/ngisearch/glibc-svp64.git
-# LibreSOC repo - uncomment once up
+# Libre-SOC repo - uncomment once up
 #git clone https://git.libre-soc.org/git/glibc-svp64.git
 cd glibc-svp64
 git submodule update --init --recursive

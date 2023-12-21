@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: LGPL-3-or-later
 # Copyright 2023 VectorCamp
 # Copyright 2023 Red Semiconductor Ltd.
-# Copyright 2023 Vantosh
+# Copyright 2023 VanTosh
 #
 # Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 # https://www.ngisearch.eu/, EU Programme 101069364.
@@ -20,9 +20,9 @@ echo "install-hdl-apt-reqs"
 mkdir -p /home/$USER/src/
 cd /home/$USER/src/
 
-# Vantosh repo
+# VanTosh repo
 git clone https://git.vantosh.com/ngisearch/documentation.git
-# LibreSOC repo - uncomment once up
+# Libre-SOC repo - uncomment once up
 #git clone https://git.libre-soc.org/git/documentation.git
 cd documentation
 make
