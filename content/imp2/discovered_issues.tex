@@ -3,21 +3,22 @@
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
-\section{Issues Discovered During Development}
 
-\subsection{Incorrect Next Instruction Address (NIA) in `sv.bc` branch instruction}
+\chapter{Issues Discovered During Development}
+
+\section{Incorrect Next Instruction Address (NIA) in `sv.bc` branch instruction}
 
 \begin{itemize}
-  \item Raised bug on the LibreSOC bug tracker:
+  \item Raised bug on the Libre-SOC bug tracker:
   \href{https://bugs.libre-soc.org/show_bug.cgi?id=1210}{bug \#1210}
-  \item LibreSOC commit \#d9544764 which fixed this issue:
+  \item Libre-SOC commit \#d9544764 which fixed this issue:
   \href{https://git.libre-soc.org/?p=openpower-isa.git;a=commitdiff;h=d9544764b1710f3807a9c0685d150a665f70b9a2}{here}
-  \item LibreSOC unit test which demonstrated this issue:
+  \item Libre-SOC unit test which demonstrated this issue:
   \href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=src/openpower/decoder/isa/test_caller_svp64_bc.py;h=93689ded619f8fa67b455f18b122fa60220ddea1;hb=089e6d352ec57be4ab645d18ad9e95df3af0d365#l310}{here}
 \end{itemize}
 
-The SVP64 implementation of \texttt{memchr} uses the vectorised branch
-conditional instruction, \texttt{sv.bc} in the SVP64 Vertical-First
+The \acrshort{SVP64} implementation of \texttt{memchr} uses the vectorised branch
+conditional instruction, \texttt{sv.bc} in the \acrshort{SVP64} Vertical-First
 \href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L67}{loop}.\\
 
 The instruction below is the Simple-V form of the normal \texttt{bc} instruction.
@@ -61,7 +62,7 @@ in registers \texttt{s} (starts at \texttt{GPR[16]} increases up to
 \texttt{`GPR[19]}) contains the matching byte \texttt{c}
 (in \texttt{GPR[4]}).\\
 
-Before LibreSOC's ISACaller simulator was fixed, the following would occur:
+Before Libre-SOC's ISACaller simulator was fixed, the following would occur:
 the \texttt{CR} bit will be set correctly by the compare immediate instruction
 \texttt{sv.cmpi}, but during the \texttt{sv.bc} instruction, the simulator
 will proceed to the next instruction address (\texttt{svstep})
@@ -206,7 +207,7 @@ Compare with the pseudo-code found in
 `~/src/openpower-isa/openpower/isa/svbranch.mdwn`,
 \href{https://git.libre-soc.org/?p=openpower-isa.git;a=blob;f=openpower/isa/svbranch.mdwn;h=e8b46e7700b44c6112ee2d873cc2e04b3c732370;hb=089e6d352ec57be4ab645d18ad9e95df3af0d365}{repo},
 also mirrored on the
-\href{https://libre-soc.org/openpower/isa/svbranch/}{LibreSOC wiki}.\\
+\href{https://libre-soc.org/openpower/isa/svbranch/}{Libre-SOC wiki}.\\
 
 The generated pseudo-code function correctly updates the \acrfull{NIA},
 but it is later overwritten by the call to 
@@ -215,5 +216,5 @@ yield from self.do_nia(asmop, ins_name, rc_en, ffirst_hit)
 \end{verbatim}
 
 On \texttt{line \#2362} of \texttt{caller.py}. For more details of the fix,
-please see the LibreSOC
+please see the Libre-SOC
 \href{https://bugs.libre-soc.org/show_bug.cgi?id=1210}{bug 1210}.
