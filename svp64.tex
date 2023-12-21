@@ -1,8 +1,9 @@
 % SPDX-License-Identifier: LGPL-3-or-later
-% Copyright 2023 Vantosh
+% Copyright 2023 VanTosh
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
+
 \documentclass[a4paper,12pt]{book}
 
 \usepackage[a4paper]{geometry}
@@ -65,7 +66,7 @@
 \renewcommand{\thechapter}{\arabic{chapter}}
 \titleformat{\chapter}{\Huge\bfseries}{\thechapter.\ }{0pt}{}
 \titlespacing{\chapter}{0pt}{-15pt}{0pt}
-\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}.}
 \renewcommand{\thesubsection}{\thesection\arabic{subsection}.}
 \renewcommand{\thesubsubsection}{\thesection\thesubsection\arabic{subsubsection}}
 
@@ -132,8 +133,8 @@
 
 \tableofcontents
 %\tableoffigures
-%\setglossarystyle{altlist}
-%\printglossary[type=\acronymtype,title=List of Definitions \& Acronyms]
+\setglossarystyle{altlist}
+\printglossary[type=\acronymtype,title=List of Definitions \& Acronyms]
 
 \clearpage
 
@@ -141,7 +142,7 @@
 \setcounter{page}{1}
 
 \setlength{\parindent}{0em}
-\setlength{\parskip}{0em}
+\setlength{\parskip}{0.75em}
 
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{2pt}
