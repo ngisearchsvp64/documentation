@@ -1,3 +1,9 @@
+% SPDX-License-Identifier: LGPL-3-or-later
+% Copyright 2023 VanTosh
+%
+% Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
+% https://www.ngisearch.eu/, EU Programme 101069364.
+
 \chapter{The choice of libc}
 
 While we explored several C libraries, the idea of the project is to be as general as possible.
@@ -48,7 +54,7 @@ After which this library was also considered out of scope for usage by our proje
 Again here, the lack of general support would mean a very niche solution that would never be able to run in general purpose situations.
 \par
 
-\subsection{klibc}
+\section{klibc}
 \label{content:klibc}
 
 klibc is minimal standard C library targeted for use of the Linux Kernel startup process, as such it provided minimal features.
@@ -57,7 +63,7 @@ the general perception is that this standard C library is part of the Kernel dev
 No real in-depth investigation was preformed beyond some basic checks.
 \par
 
-\subsection{Bionic}
+\section{Bionic}
 
 Bionic is a standard C library used on Android, while the PowerISA support is not official by Google and not available under the open source project.
 We evaluated the current open source implementation, however it lacks any possiblity to provide larger memory allocations
@@ -66,7 +72,7 @@ As this standard C library takes a lot of inspiration from the BSD libc, by impl
 the project dismissed this standard C library.
 \par
 
-\subsection{uClibc \& uClibc-ng}
+\section{uClibc \& uClibc-ng}
 \label{content:uclibc}
 
 This standard C library is designed for small devices, embedded devices and mobile devices, and has support for PowerPC based processors.
@@ -89,7 +95,7 @@ Buildroot
 \ldots
 \end{itemize}
 
-\subsection{BSD libc}
+\section{BSD libc}
 
 The BSD libc standard C library is a default C library for OpenBSD, FreeBSD, NetBSD, and macOS.
 As this library originates from the original 4.4BSD, it targets BSD based platforms.
@@ -97,7 +103,7 @@ For this project we are looking primarly to Linux based platforms as support for
 However this standard C library is very efficient and fast, and was only dismissed due to the scope of this project.
 \par
 
-\subsection{musl}
+\section{musl}
 \label{content:musl}
 
 musl is a standard C library with clean efficient conformant implementations.
@@ -110,7 +116,7 @@ This standard library is \acrshort{LSB} compliant for several architectures, how
 this would not pose a problem, however in light of several other factors as described above, this standard C library was not chosen.
 \par
 
-\subsection{glibc}
+\section{glibc}
 \label{content:glibc}
 
 glibc is a standard C library designed for general purpose and it is currently the most used standard C library in open source projects,
@@ -126,4 +132,3 @@ when performance and ease of usage are considered.
 This standard C library is \acrshort{LSB} compliant and supported by Debian, PowerEL, Fedora, RHEL, OpenSuSE, SLES, Gentoo
 and several other Linux distributions of which PowerISA compliant processors are supported, including patched binutils to enable SVP64.
 \par
-
