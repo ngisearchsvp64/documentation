@@ -3,9 +3,10 @@
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
-\section{Debugging and Running Function Tests}
 
-\subsection{Running tests and checking if errors present}
+\chapter{Debugging and Running Function Tests}
+
+\section{Running tests and checking if errors present}
 
 Figuring out the issue with a function is an iterative process, and may require
 looking at many different files.\\
@@ -56,7 +57,7 @@ do_test (0, 16 << i, MAX_SIZE, SMALL_CHAR, MIDDLE_CHAR);
 See,
 \href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/test-strchr.c#L267}{test-strchr.c\#267}.
 
-\subsection{Determining causes of errors}
+\section{Determining causes of errors}
 \label{subsec:determine_cause_err}
 
 \subsubsection{Incorrect value for character \textbf{c} loaded into \texttt{GPR[4]}}
