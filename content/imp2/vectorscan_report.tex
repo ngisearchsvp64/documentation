@@ -40,4 +40,54 @@ Support for SIMDe is now officially in Vectorscan and it has been added as part 
 
 \subsection{Vectorscan adaptation for SVP64}
 
+This is actually the harder part as it would need extensive refactoring of the whole codebase of Vectorscan. Thankfully we do not have to do that, as after extensive analysis of the codebase we found that we can keep the same SIMD-friendly algorithms
+and slightly modify them so that they can accomodate the changes needed for predicates/masked loads. We have adapted a single search engine from the many modules in Vectorscan. The one we decided to work on is the already refactored Noodle search algorithm.
 
+Before we analyse the changes involved, let us first give an explanation of how the typical SIMD algorithm of processing a buffer of N bytes is implemented using the following pseudocode:
+
+\begin{verbatim}
+# Buffer is at memory address buf, size N
+end = buf + N
+IF N < SIMD_WIDTH THEN
+   # PROCESS BYTES SCALAR
+   RETURN
+ENDIF
+
+# Head:
+IF ALIGNED(buf, SIMD_WIDTH) THEN
+   # PROCESS BYTES UNTIL ALIGNED
+   # INCREASE buf to aligned boundary
+ENDIF
+
+# Main loop: buf is now aligned to SIMD_WIDTH
+# Now we can process using the full SIMD vectors
+WHILE buf < end
+   v = LOAD_VECTOR(buf)
+   # PROCESS VECTOR v
+   buf += SIMD_WIDTH
+END WHILE
+
+# Tail: Some bytes left
+IF buf < end THEN
+   # PROCESS BYTES SCALAR
+ENDIF
+\end{verbatim}
+
+In some cases, the check for smaller sizes and the check for alignment can be merged, but the principle remains the same.
+Now the benefit of a system like SVP64 is that you can skip the Head and Tail parts of the algorithm and just have a main loop.
+However, the changes to a software like Vectorscan would have to be enormous, as it's completely tailored around SIMD architectures.
+However, SVP64 as well as at least two modern SIMD architectures, SVE/SVE2 and AVX512 support the notion of predicated/masked loads.
+In masked loads, we can use predicate masks to load a full vector on one hand until the aligned boundary, but on the other hand only process the bytes that are not masked, and skip the rest.
+
+This has proven to be especially convenient and it allows a simple compromise between writing a fully optimized SVP64 algorithm and providing something that will work with mostly the same code for all architectures.
+We have to remember that for a project such as Vectorscan that supports as many architectures and in the process of supporting even more, keeping things portable is of great importance while at the same time it has to ensure that performance will not be severely impacted by the decisions made.
+
+We believe that this will be a good compromise, until such time that actual SVP64 hardware exists and it will be much easier to better optimize code for that.
+
+Now that we have explained the changes involved, we will mention that we have changed Noodle to provide two separate code paths, one for architectures that support masked loads (such as SVP64, SVE2 and AVX512) and the other for generic SIMD architectures (like Neon, AVX2, VSX).
+
+The refactoring changes were too large to include here but everything was done in \href{https://github.com/VectorCamp/vectorscan}{Vectorscan} and in particular as part of a large Pull Request:
+
+\href{https://github.com/VectorCamp/vectorscan/pull/211}{Feature/refactor noodle masked loads \#211}
+
+We believe that these changes will make it easier to have an Noodle SVP64 implementation as part of IMP3.
