@@ -1,0 +1,129 @@
+\chapter{The choice of libc}
+
+While we explored several C libraries, the idea of the project is to be as general as possible.
+We explored several options in an effort to find the best available standard C library possible for usage within the scope of this project.
+In this effort and in combination with other work that is relevant to the project, we ended up chosing ``glibc".
+We provide an insight to several standard C libraries, we explored and tested with some feedback.
+\par
+
+\section{Newlib}
+\label{sec:newlib}
+
+This standard C library was quickly dismissed as support for any PowerPC or PowerISA would require adding support for newer instructions.
+While this library is still in use by Google for some niche solutions, general support for this standard C library has dwindeled.
+This standard C library was one of the basis, inspiration for Picolibc \ref{content:picolibc}.
+\par
+
+\section{AVR libc}
+\label{sec:avrlibc}
+
+AVR libc has no support for PowerPC or PowerISA processors, it targets mostly 8-bit \acrshort{RISC} processors.
+This standard C library was one of the basis, inspiration for Picolibc \ref{content:picolibc}.
+
+\section{Picolibc}
+\label{content:picolibc}
+
+This is a standard C library designed for smaller embedded devices with limited space.
+Picolibc has been used on ARM based processors and on RISC-V process, recently PowerISA support was added.
+Therefor a good candidate for use by SVP64, however it lacks good \acrfull{LE} support as it was based upon the PowerPC spec being \acrfull{BE}.
+Adding full support for \acrfull{LE} is beyond the scope of this project and therefor this library was considered to be difficult to use.
+We therefor did not perform any tests or practical usage of Picolibc.
+\par
+
+Another issue here is the lack of ecosystem or upstream usage, if we were to look at adding full support for Picolibc,
+the eventual usage would still be limited to embedded devices, and not general purpose usage as there is no \acrfull{LSB} support.
+\par
+
+\section{dietlibc}
+
+dietlibc is another standard C library designed for devices on a diet, again targeting embedded devices.
+This standard library also support the PowerISA architecture, again from a PowerPC bases however it has full \acrfull{LE} support.
+This means that adding SVP64 would be easier as most of the basic instruction are already present.
+As a performance test, using the standard test suite, performed very poorly with string searches at round about 1 second.
+In an exploration stage of looking to optimise these patterns and tests, we tried several changes to basic patters,
+which turned out to reduce speed even more and this both on larger and smaller device bases.
+After which this library was also considered out of scope for usage by our project.
+\par
+
+Again here, the lack of general support would mean a very niche solution that would never be able to run in general purpose situations.
+\par
+
+\subsection{klibc}
+\label{content:klibc}
+
+klibc is minimal standard C library targeted for use of the Linux Kernel startup process, as such it provided minimal features.
+While it can be used in embedded devices, and MirBSD ksh is such an example the team has played with,
+the general perception is that this standard C library is part of the Kernel development toolchain and expansion to this would be very difficult.
+No real in-depth investigation was preformed beyond some basic checks.
+\par
+
+\subsection{Bionic}
+
+Bionic is a standard C library used on Android, while the PowerISA support is not official by Google and not available under the open source project.
+We evaluated the current open source implementation, however it lacks any possiblity to provide larger memory allocations
+and will perform worse on larger memory devices,
+As this standard C library takes a lot of inspiration from the BSD libc, by implementing OpenBSD and FreeBSD standard C concepts,
+the project dismissed this standard C library.
+\par
+
+\subsection{uClibc \& uClibc-ng}
+\label{content:uclibc}
+
+This standard C library is designed for small devices, embedded devices and mobile devices, and has support for PowerPC based processors.
+The support for newer PowerISA based processors is not complete and lacks several features,
+for the intent of this project it would have been sufficient to complete string search.
+However the basic performance tests ran into 1.5 seconds and did not support larger strings,
+increasing the string size incurred into longer test runs and resulted into needing to complete several performance tests.
+As the support for newer PowerISA is limited and the basic performance this standard C library was also considered out-of-scope.
+\par
+
+Unlike previous standard C library, this standard C library has some usage in real world applications such as
+\begin{itemize}
+\item
+busybox
+\item
+OpenWRT
+\item
+Buildroot
+\item
+\ldots
+\end{itemize}
+
+\subsection{BSD libc}
+
+The BSD libc standard C library is a default C library for OpenBSD, FreeBSD, NetBSD, and macOS.
+As this library originates from the original 4.4BSD, it targets BSD based platforms.
+For this project we are looking primarly to Linux based platforms as support for PowerISA on BSD is not at the same level.
+However this standard C library is very efficient and fast, and was only dismissed due to the scope of this project.
+\par
+
+\subsection{musl}
+\label{content:musl}
+
+musl is a standard C library with clean efficient conformant implementations.
+While at first glance it seemed very interesting and the easy, the perfomance was mediocare doing string search at 0.15 seconds.
+The main problem was trying to get better performance as it required rewriting too much code and was deemed beyond the scope of this project.
+While the test suites is easy to comprehend, it lacks larger subsets and more examples.
+\par
+
+This standard library is \acrshort{LSB} compliant for several architectures, however not for the PowerPC or PowerISA processors,
+this would not pose a problem, however in light of several other factors as described above, this standard C library was not chosen.
+\par
+
+\subsection{glibc}
+\label{content:glibc}
+
+glibc is a standard C library designed for general purpose and it is currently the most used standard C library in open source projects,
+as most Linux distributions provide glibc.
+It has a full set of test suites and has good documentation, in addition to having project members have good knowledge of the standard C library.
+Thie initial performance tests for string were one of the best, as these functions have already been tested against PowerISA based processors,
+and they have been optimized over several interations.
+Our initial tests had string search at less then 0.05 seconds on average.
+The re-use possiblities are very high and the overhead of a ``larger" standard C library are quickly overlooked,
+when performance and ease of usage are considered.
+\par
+
+This standard C library is \acrshort{LSB} compliant and supported by Debian, PowerEL, Fedora, RHEL, OpenSuSE, SLES, Gentoo
+and several other Linux distributions of which PowerISA compliant processors are supported, including patched binutils to enable SVP64.
+\par
+
