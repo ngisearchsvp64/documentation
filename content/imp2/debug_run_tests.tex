@@ -5,6 +5,7 @@
 % https://www.ngisearch.eu/, EU Programme 101069364.
 
 \chapter{Debugging and Running Function Tests}
+\label{sec:debug_run_tests}
 
 \section{Running tests and checking if errors present}
 
@@ -168,6 +169,8 @@ matches \texttt{0x17} as expected) there should be a branch to line
 \texttt{\#108}, however the simulator jumps to the \texttt{subf}
 (assembly using \texttt{sub} extended mnemonic),
 \href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s#L112}{line \#112}.\\
+
+\label{subsubsec:wrong_val_man_addr}
 
 Turns out the manual \texttt{sv.bc} branch address wasn't update after
 copying assembler from existing function.\\
