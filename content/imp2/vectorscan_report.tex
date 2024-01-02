@@ -125,9 +125,23 @@ and in the process of supporting even more, keeping things portable is of great 
 while at the same time it has to ensure that performance will not be severely impacted by the decisions made.
 \par
 
-We believe that this will be a good compromise,
-until such time that actual \acrshort{SVP64} hardware exists and it will be much easier to better optimize code for that.
-\par
+We have to remember that for a project such as Vectorscan that supports as
+many architectures and in the process of supporting even more, keeping
+things portable is of great importance while at the same time it has
+to ensure that performance will not be severely impacted
+by the decisions made. \par
+
+Fortunately Simple-V is designed with such portability in mind. Just like
+with Cray Vectors, ARM SVE/2, and RISC-V Vectors, Scalable Vector Loops
+may be written once, treating the assembler as if it was more
+akin to an Architecturally-independent and stable "Software API".
+With Scalable Vectors, Programmers can be confident
+that binary applications written years ago will not need any changes
+to be faster or more power-efficient on future hardware. This is a very
+different situation from SIMD ISAs which directly expose the
+underlying SIMD hardware to the programmer, where the routine addition
+of new instructions to such SIMD ISAs is inherently guaranteed to require
+a full assembly-level review and rewrite of the software. \par
 
 Now that we have explained the changes involved, we will mention that we have changed Noodle to provide two separate code paths,
 one for architectures that support masked loads (such as \acrshort{SVP64}, \acrshort{SVE2} and \acrshort{AVX512})
