@@ -1,30 +1,35 @@
 \chapter{Commentary and Conclusions}
 
 VectorCamp, VanTosh have been \textit{users} and \textbf{not} developers
-of Simple-V, and have been supported by Red Semiconductor during this task.
-Therefore the goal during this milestone was to push the capabilities of a
-frozen version of Simple-V, and not to try to change
-and/or add new features. \\
+of Simple-V during this task.
+Therefore the goal during this milestone was to use the capabilities of a
+frozen version of Simple-V in order to provide the research and
+groundwork for the next milestone.
 
-Due to the decision of using binutils which allowed to use standard features of
-PowerISA assembler, limitations were imposed on the number of features of
+By choice and familiarity, VectorCamp has used a SIMD-style
+implementation of glibc functions. This gives an initial code
+comparison to be used for benchmarking in milestone 3 as the implemented
+wrapper now allows for the integration with the \texttt{glibc} test framework.
+
+The decision to use binutils allowed to use standard features of
+PowerISA assembler (such as instruction aliases).
+However, the use of the older version of binutils imposed limitations
+on the number of features of
 Simple-V which could be used. This is why, for example,
-Data-Dependent Fail-First was not available, and hence why the size of
+Data-Dependent Fail-First was not used, and hence why the size of
 \texttt{memchr}, \texttt{memrchr}, and \texttt{strchr} were
 substantially larger than theoretically possible.
-The lagging support of features in binutils does not in any way imply that
-Simple-V has limited potential for code size reduction and clarity.\\
 
 The implemented functions, \texttt{memchr}, \texttt{memrchr},
-and \texttt{strchr}, demonstrate that even the subset of Simple-V can be used
+and \texttt{strchr}, demonstrate that even a subset of Simple-V can be used
 to implement standard C library string functions \textit{as well as} be
 integrated into \texttt{glibc} testing framework
 (see Section \ref{sec:debug_run_tests}, page \pageref{sec:debug_run_tests}).
 
-Because for the purpose of this milestone, we fixed our version of
+For the purpose of this milestone, VectorCamp fixed the version of
 \texttt{openpower-isa} to a particular commit,
-\href{https://git.libre-soc.org/?p=openpower-isa.git;a=commitdiff;h=d9544764b1710f3807a9c0685d150a665f70b9a2}{commit \#d9544764},
-we were not able to take advantage of an existing fix with binutils
-address calculation (manual calculation covered in Section
+\href{https://git.libre-soc.org/?p=openpower-isa.git;a=commitdiff;h=d9544764b1710f3807a9c0685d150a665f70b9a2}{commit \#d9544764}.
+This meant it was not possible to take advantage of an existing fix
+with binutils address calculation (manual calculation covered in Section
 \ref{subsubsec:wrong_val_man_addr},
 page \pageref{subsubsec:wrong_val_man_addr}).
