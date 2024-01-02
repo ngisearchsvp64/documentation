@@ -31,7 +31,8 @@ make pyfnwriter
 
 cd ../
 # VanTosh repo
-git clone https://git.vantosh.com/ngisearch/glibc-svp64.git
+#git clone https://git.vantosh.com/ngisearch/glibc-svp64.git
+git clone ssh://git@git.vantosh.com:65422/ngisearch/glibc-svp64.git
 # Libre-SOC repo - uncomment once up
 #git clone https://git.libre-soc.org/git/glibc-svp64.git
 cd glibc-svp64
