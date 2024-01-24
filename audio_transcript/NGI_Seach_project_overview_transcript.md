@@ -144,9 +144,9 @@ can even begin, we have to ensure two things:
 
 Milestone 3 will continue these efforts.
 
-## Vantosh
+## VanTosh
 
-Vantosh had the task of researching available C libraries to be used with
+VanTosh had the task of researching available C libraries to be used with
 custom SVP64 routines.
 
 While several C libraries were explored, the idea of the project was and is
@@ -155,7 +155,7 @@ effort to find the best available standard C library possible
 for usage within the scope of this project.
 
 In this effort and in combination with other work that is relevant to
-the project, we ended up chosing “glibc”. We provide an insight to several
+the project, we ended up chosing glibc. We provide an insight to several
 standard C libraries we explored and tested with some feedback. Full details
 can be found in our Milestone 2 report.
 
