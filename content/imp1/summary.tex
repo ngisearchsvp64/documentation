@@ -24,22 +24,22 @@ scalar Power ISA subset, it is much smaller and easier to implement in
 hardware (simplest implentation being a literal "for-loop"). SVP64 is
 designed to provide the programmer with powerful mathematical operations
 without requiring to add dedicated hard-IP blocks (crypto, vector unit, A/V
-codecs, etc.).\\
+codecs, etc.).
 
 As for relevance to NGI Search, it may seem like the Internet is a
 Software-only enviroment, in actuality this software must run on hardware.
 As a consortium, we are addressing the fundamental performance and
 power-effieciency of this hardware, by verifying that low-level memory,
 string, regular-expression, and Machine Learning algorithms run optimally
-on SVP64.\\
+on SVP64.
 
 The biggest difference between other vector extensions provided by Intel,
 ARM, etc., is that if we find SVP64 to be sub-optimal, an opportunity is
 provided to us by NGI Search to investigate how to actually improve the
-SVP64 extension to Power ISA.\\
+SVP64 extension to Power ISA.
 
 By doing this research, not only SVP64 benefits, but *everyone's* algorithms
-benefit from increased performance, and reduced energy requirements.\\
+benefit from increased performance, and reduced energy requirements.
 
 \subsection{Who are the individual consortium members, and what are their specialisations?}
 
@@ -62,12 +62,12 @@ benefit from increased performance, and reduced energy requirements.\\
 
 The SVP64 Extension is optimised to greatly simplify mathematical calculations,
 providing benefits in the fields of Cryptography, Machine Learning,
-Autonomous systems, Audio/Video, DSP and many other general-purpose areas.\\
+Autonomous systems, Audio/Video, DSP and many other general-purpose areas.
  
 The building-blocks of SVP64 are designed to provide by combination these
 solutions and we are now working, with the support of NGI Search, to
 establish new building-blocks to include Advanced Search capabilities,
-which are also applicable to all of the above.\\
+which are also applicable to all of the above.
 
 \subsection{What milestones have you set and how are you going about achieving them?}
 
@@ -96,12 +96,12 @@ which addressed different goals.
 We have been part of the NGI Ecosystem now for five years:
 NLnet (NGI Trust and Ensure), NGI POINTER and now NGI Search.
 Whilst NGI Search is new and developing we expect it to be as
-useful and productive as our previous interactions.\\
+useful and productive as our previous interactions.
 
 In particular we really appreciate the additional support that
 comes with the NGI Family: the "added-value" activities, such
 as training, sharing of ideas, and Mentoring on strategies for
-Business Development.\\
+Business Development.
 
 Now will be a brief introduction on the work done by the three consortium
 partners, Red Semiconductor, VectorCamp and VanTosh.
@@ -111,14 +111,14 @@ partners, Red Semiconductor, VectorCamp and VanTosh.
 Red Semiconductor was in charge of planning and organisation of the milestones,
 as well as documentation and providing assistance to VectorCamp and Vantosh
 by writing SVP64 routines and explaining the features relevant to development
-within this project.\\
+within this project.
 
-For milestone 3, a logo for the project had been drawn up in June 2023.\\
+For milestone 3, a logo for the project had been drawn up in June 2023.
 
 Interview was done in July 2023 which covered significance of SVP64 and
 the importance of funding by NGI and NLnet.
 The interview can be found
-\href{https://spaces.fundingbox.com/spaces/ngi-community-ngi-innovators/64b8dadbabf7a659885ee01e}{here}.\\
+\href{https://spaces.fundingbox.com/spaces/ngi-community-ngi-innovators/64b8dadbabf7a659885ee01e}{here}.
 
 Later, an audio recording was made to summarise the goals and progress of the
 project. The recording is avalable on the NGI Search website, 
@@ -135,7 +135,7 @@ accepted upstream. So a fork of Hyperscan was created in the form of
 Vectorscan, where portability is the main focus of the project.
 Now a few years later, and Vectorscan has become a popular project,
 with many external contributions. It is currently heavily developed and
-continuously optimized and improved.\\
+continuously optimized and improved.
 
 At the time of writing it is ported
 to ARM and POWER architectures. Particularly for ARM, Neon/ASIMD support
@@ -147,13 +147,12 @@ porting it to even more architectures.
 Now, as part of this NGI Search project, the goal is to port it to LibreSOC
 and SVP64 in particular. Due to SVP64 being a Vector architecture,
 and not a SIMD one, and with Vectorscan’s whole codebase designed around SIMD,
-this is not such a straightforward task.\\
+this is not such a straightforward task.
 
 The whole codebase is tailored around SIMD intrinsics and SIMD data types to
 the point that it is currently impossible to run it on an architecture that
 lacks a supported SIMD unit. So, before actual SVP64 development on Vectorscan
-can even begin, we have to ensure two things:\\
-
+can even begin, we have to ensure two things:
 
 \begin{enumerate}
   \item Vectorscan can run on a SIMD-less architecture, without rewriting
@@ -176,12 +175,8 @@ VanTosh has the tasks of:
 The idea of the project is to be as general as possible, which imposes limitations
 on the standard C library choice for this project. Full comparison of various
 C libraries researched will done and documented during Milestone 2.
-[Link to report section??]\\
+[Link to report section??]
 
 Once the choice a C library has been made, the next goal is to continue working on
 several string and memory routines to leverage the capabilities of SVP64,
-and demonstrate intergration with a standard test framework.\\
-
-Again, we would to thank NGI Search for their generous support for
-this project, and we hope that the final research will be useful to individuals
-and projects in the future.\\
+and demonstrate intergration with a standard test framework.
