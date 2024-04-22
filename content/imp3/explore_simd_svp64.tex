@@ -28,10 +28,35 @@ The third operand, \texttt{vec3} is used to determine whether an element from
 \texttt{vec1} or \texttt{vec2} gets stored in the resulting vector.
 
 \begin{itemize}
-  \item For each element, if element in \texttt{vec3} is equal to 1,
-  \item Otherwise, use the lower nibble of element in \texttt{b} as an index
-        for vector \texttt{a} and store in result.
+  \item For each element, if element in \texttt{vec3} is equal to 0, store
+        corresponding element from \texttt{vec1} in the result.
+  \item Otherwise, store corresponding element from \texttt{vec2} in the result.
 \end{itemize}
+
+No re-arrangement happens (not a shuffle) and in hardware, this might be
+implemented as 16 2-in 1-out byte multiplexers.
+
+An SVP64 implementation for this operation can be found
+\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/branch/master/svp64-port/svp64/vperm_svp64.s}{here}.
+
+The main assembler portion is this:
+\begin{verbatim}
+.main_loop:
+  sv.cmpb             *maskOut, *vec3, mask0
+  sv.and              *res, *vec1, *maskOut
+  sv.cmpb             *maskOut, *vec3, mask1
+  sv.and              *tmp, *vec2, *maskOut
+  sv.or               *res, *res, *tmp
+  svstep.             ctr, 1, 0
+  # Branch if CTR!=0
+  bdnz                .main_loop
+\end{verbatim}
+
+Half of \texttt{vec3} is compared with \texttt{mask0} (all zeros), and an output
+mask is produced. This mask is then AND'd with half of \texttt{vec1}, and stored
+in result.
+Similar instructions occur for \texttt{vec2}, but a temporary is used, and then
+OR'd with the result, which will provide the final \texttt{vperm} output.
 
 \subsection{Shuffle}
 
