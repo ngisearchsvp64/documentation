@@ -1,0 +1,70 @@
+% SPDX-License-Identifier: LGPL-3-or-later
+% Copyright 2023 VectorCamp
+% Copyright 2023 Red Semiconductor Ltd.
+% Copyright 2023 VanTosh
+%
+% Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
+% https://www.ngisearch.eu/, EU Programme 101069364.
+\section{Exploring Several Important SIMD Operations}
+\subsection{Vector Permute - \texttt{vperm}}
+
+A very useful operation present in PowerISA as part of the VSX/VMX.
+A reference implementation of vector permute in Python looks like this:
+
+\begin{verbatim}
+def ref_vpermd(vec1, vec2, vec3):
+    vecResult = [0]*16
+    for i in range(16): # setvl VL=16
+        if vec3[i] == 0:
+            vecResult[i] = vec1[i]
+        else:
+            vecResult[i] = vec2[i]
+
+    return vecResult
+\end{verbatim}
+
+\texttt{vperm} takes in three operand vectors, 16*8-bit (128-bit) each.
+The third operand, \texttt{vec3} is used to determine whether an element from
+\texttt{vec1} or \texttt{vec2} gets stored in the resulting vector.
+
+\begin{itemize}
+  \item For each element, if element in \texttt{vec3} is equal to 1,
+  \item Otherwise, use the lower nibble of element in \texttt{b} as an index
+        for vector \texttt{a} and store in result.
+\end{itemize}
+
+\subsection{Shuffle}
+
+Shuffle is a useful operation present in the Intel AVX extension.
+Particular variant in question is 256-bit, 8-bit element (32x8) inputs.
+The instruction is split into two 16-element lanes, for legacy reasons.
+
+\begin{verbatim}
+def ref__mm256_shuffle_epi8(a, b):
+    r = [0] * 32
+    for i in range(0, 16):
+        # Lower half
+        if b[i] & 0x80:
+            r[i] = 0
+        else:
+            r[i] = a[b[i] & 0x0F]
+        # Upper half
+        if b[16+i] & 0x80:
+            r[16+i] = 0
+        else:
+            r[16+i] = a[16+(b[16+i] & 0x0F)]
+
+    return r
+\end{verbatim}
+
+With each lane the following happens:
+
+\begin{itemize}
+  \item For each element in lane, check if MSb of element in vector \texttt{b}
+        is set. If set, clear the corresponding result element.
+  \item Otherwise, use the lower nibble of element in \texttt{b} as an index
+        for vector \texttt{a} and store in result.
+\end{itemize}
+
+The difference with the second lane is that an offset of 16 is added (since
+second lane can \textit{only} access its own elements).
