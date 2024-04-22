@@ -3,7 +3,7 @@
 The goal of the project has been further the development of hardware
 optimised for search-related algorithms and string processing by
 researching standard C library functionality and creating several
-implementations based on experimental SVP64 extension from Libre-SOC.
+implementations based on experimental \acrshort{SVP64} extension from Libre-SOC.
 
 \section{Introduction}
 
@@ -15,57 +15,57 @@ This project consists of a consortium of three companies represented by:
   \item VanTosh - Toshaan Bharvani
 \end{itemize}
 
-\subsection{What is SVP64 and why is SVP64 relevant to NGI Search?}
+\subsection{What is \acrshort{SVP64} and why is \acrshort{SVP64} relevant to NGI Search?}
 
-Simple-Vector Prefix 64-bit (SVP64) is a Cray-style vectorisation system which
+\acrfull{SVP64} is a Cray-style vectorisation system which
 turns scalar register files and scalar instructions into vector operations,
 without changing their scalar behaviour. Being an orthogonal extension to the
-scalar Power ISA subset, it is much smaller and easier to implement in
-hardware (simplest implentation being a literal "for-loop"). SVP64 is
+scalar \acrfull{POWER} ISA subset, it is much smaller and easier to implement in
+hardware (simplest implentation being a literal "for-loop"). \acrshort{SVP64} is
 designed to provide the programmer with powerful mathematical operations
 without requiring to add dedicated hard-IP blocks (crypto, vector unit, A/V
 codecs, etc.).
 
-As for relevance to NGI Search, it may seem like the Internet is a
+As for relevance to \acrfull{NGI} Search, it may seem like the Internet is a
 Software-only enviroment, in actuality this software must run on hardware.
 As a consortium, we are addressing the fundamental performance and
 power-effieciency of this hardware, by verifying that low-level memory,
 string, regular-expression, and Machine Learning algorithms run optimally
-on SVP64.
+on \acrshort{SVP64}.
 
 The biggest difference between other vector extensions provided by Intel,
-ARM, etc., is that if we find SVP64 to be sub-optimal, an opportunity is
-provided to us by NGI Search to investigate how to actually improve the
-SVP64 extension to Power ISA.
+ARM, etc., is that if we find \acrshort{SVP64} to be sub-optimal, an opportunity is
+provided to us by \acrshort{NGI} Search to investigate how to actually improve the
+\acrshort{SVP64} extension to \acrshort{POWER} ISA.
 
-By doing this research, not only SVP64 benefits, but *everyone's* algorithms
+By doing this research, not only \acrshort{SVP64} benefits, but *everyone's* algorithms
 benefit from increased performance, and reduced energy requirements.
 
 \subsection{Who are the individual consortium members, and what are their specialisations?}
 
 \begin{itemize}
   \item Red Semiconductor is a fabless semiconductor company which will implement
-  working Silicon deploying the SVP64 Enhancements to the Power ISA, making
-  developer kits available to prospective IoT/EDGE customers, the Free and
-  Open Source Software and Hardware (FOSSHW) and NGI hardware communities
-  alike. SVP64 itself is a Power ISA version of the general Simple-V
+  working Silicon deploying the \acrshort{SVP64} enhancements to the \acrshort{POWER} ISA, making
+  developer kits available to prospective \acrfull{IoT}/edge customers, the
+  \acrfull{FOSSHW} and NGI hardware communities
+  alike. \acrshort{SVP64} itself is a \acrshort{POWER} ISA version of the general Simple-V
   extension, initially developed by the Libre-SOC project with NLnet funding.
-  \item VectorCamp is a provider of SIMD Vectorization and Software optimization
+  \item VectorCamp is a provider of \acrfull{SIMD} Vectorization and Software optimization
   and Training Services.
-  \item VanTosh is an Independent Software Vendor (ISV) with expertise in porting
-  to the POWER platform, and a Managed Service Provider (MSP) for running
-  your private cloud based multi-architecture like POWER machines, and is
+  \item VanTosh is an \acrfull{ISV} with expertise in porting
+  to the \acrshort{POWER} platform, and a \acrfull{MSP} for running
+  your private cloud based multi-architecture like \acrshort{POWER} machines, and is
   also very active in open source communities for software and hardware.
 \end{itemize}
 
 \subsection{About this project}
 
-The SVP64 Extension is optimised to greatly simplify mathematical calculations,
+The \acrshort{SVP64} Extension is optimised to greatly simplify mathematical calculations,
 providing benefits in the fields of Cryptography, Machine Learning,
-Autonomous systems, Audio/Video, DSP and many other general-purpose areas.
+Autonomous systems, Audio/Video, \acrfull{DSP} and many other general-purpose areas.
  
-The building-blocks of SVP64 are designed to provide by combination these
-solutions and we are now working, with the support of NGI Search, to
+The building-blocks of \acrshort{SVP64} are designed to provide by combination these
+solutions and we are now working, with the support of \acrshort{NGI} Search, to
 establish new building-blocks to include Advanced Search capabilities,
 which are also applicable to all of the above.
 
@@ -79,27 +79,27 @@ team and there will be cross-organisational cooperation on all Milestones.
 
 The ultimate goal is to create a progressive family of micro-processors
 and this grant allows to validate the critical elements of the
-SVP64 extension, ensuring that the processor family is efficient at string,
+\acrshort{SVP64} extension, ensuring that the processor family is efficient at string,
 data, and machine learning, as wel as provides support for standard open
 source software libraries.
 
-\subsection{How is the NGI Search money helping you?}
+\subsection{How is the \acrshort{NGI} Search money helping you?}
 
 At a fundamental level it is buying us "thinking time".
 A considerable amount of time is spent to analyse and understand,
 to a purpose. This purpose is the consequences for Search as
-opposed to previously funded developments such as NGI POINTER,
+opposed to previously funded developments such as \acrshort{NGI} POINTER,
 which addressed different goals.
 
-\subsection{How has being part of NGI Search helped you?}
+\subsection{How has being part of \acrshort{NGI} Search helped you?}
 
-We have been part of the NGI Ecosystem now for five years:
-NLnet (NGI Trust and Ensure), NGI POINTER and now NGI Search.
-Whilst NGI Search is new and developing we expect it to be as
+We have been part of the \acrshort{NGI} Ecosystem now for five years:
+NLnet (\acrshort{NGI} Trust and Ensure), \acrshort{NGI} POINTER and now \acrshort{NGI} Search.
+Whilst \acrshort{NGI} Search is new and developing we expect it to be as
 useful and productive as our previous interactions.
 
 In particular we really appreciate the additional support that
-comes with the NGI Family: the "added-value" activities, such
+comes with the \acrshort{NGI} Family: the "added-value" activities, such
 as training, sharing of ideas, and Mentoring on strategies for
 Business Development.
 
@@ -110,13 +110,13 @@ consortium partners, Red Semiconductor, VectorCamp and VanTosh.
 
 Red Semiconductor was in charge of planning and organisation of the milestones.
 For milestones 2 and 3 onwards, Red focused on documentation and providing
-assistance to VectorCamp and Vantosh by writing SVP64 routines and explaining
+assistance to VectorCamp and Vantosh by writing \acrshort{SVP64} routines and explaining
 the features relevant to development within this project.
 
 During Jun 2023, a logo for the project was drawn up.
 
-Interview was done in July 2023 which covered significance of SVP64 and
-the importance of funding by NGI and NLnet.
+Interview was done in July 2023 which covered significance of \acrshort{SVP64} and
+the importance of funding by \acrshort{NGI} and NLnet.
 The interview can be found
 \href{https://spaces.fundingbox.com/spaces/ngi-community-ngi-innovators/64b8dadbabf7a659885ee01e}{here}.
 
@@ -127,7 +127,7 @@ project. The recording is avalable on the NGI Search website,
 \section{VectorCamp}
 
 VectorCamp is the official maintainer of Vectorscan, a Portable Massively
-parallel Regular-Expression Matcher library. It is used extensively in
+parallel \acrfull{regex} Matcher library. It is used extensively in
 Intrusion Detection Systems software (like Snort, Suricata and others)
 and Network Security Analysis in general. Originally the project was forked
 from Intel’s Hyperscan but attempts to port it to ARM (originally) were not
@@ -138,35 +138,35 @@ with many external contributions. It is currently heavily developed and
 continuously optimized and improved.
 
 At the time of writing it is ported
-to ARM and POWER architectures. Particularly for ARM, Neon/ASIMD support
-is 100\% while there is ongoing work to port the code to SVE2 and
+to ARM and \acrshort{POWER} architectures. Particularly for ARM, Neon/ASIMD support
+is 100\% while there is ongoing work to port the code to \acrshort{SVE2} and
 the same Fat Runtime functionality as on x86 is implemented,
-so that the same binary can run and take advantage of SVE2 if available.
+so that the same binary can run and take advantage of \acrshort{SVE2} if available.
 Furthermore, Loongson LSX support is under review and we are in progress of
 porting it to even more architectures.
 
 During Milestone 1, VectorCamp worked together with Red and VanTosh to plan out
-the project work relating to the use of SVP64 in Vectorscan, and also provided
-research and expertise in SIMD in general.
+the project work relating to the use of \acrshort{SVP64} in Vectorscan, and also provided
+research and expertise in \acrshort{SIMD} in general.
 
-The primary goal for VectorCamp for NGI Search is to port
-Vectorscan to the Libre-SOC architecture, SVP64 in particular to demonstrate
+The primary goal for VectorCamp for \acrshort{NGI} Search is to port
+Vectorscan to the Libre-SOC architecture, \acrshort{SVP64} in particular to demonstrate
 regex search capabilities.
 
-Due to SVP64 being a Vector architecture,
-and not a SIMD one, and with Vectorscan’s whole codebase designed around SIMD,
+Due to \acrshort{SVP64} being a Vector architecture,
+and not a \acrshort{SIMD} one, and with Vectorscan’s whole codebase designed around \acrshort{SIMD},
 this is not such a straightforward task.
 
-The whole codebase is tailored around SIMD intrinsics and SIMD data types to
+The whole codebase is tailored around \acrshort{SIMD} intrinsics and \acrshort{SIMD} data types to
 the point that it is currently impossible to run it on an architecture that
-lacks a supported SIMD unit. So, before actual SVP64 development on Vectorscan
+lacks a supported \acrshort{SIMD} unit. So, before actual \acrshort{SVP64} development on Vectorscan
 can even begin, we have to ensure two things:
 
 \begin{enumerate}
-  \item Vectorscan can run on a SIMD-less architecture, without rewriting
+  \item Vectorscan can run on a \acrshort{SIMD}-less architecture, without rewriting
    the whole code base.
   \item Vectorscan has to be adapted -at least partially at first- to make it easy
-   for a single algorithm to be ported to SVP64.
+   for a single algorithm to be ported to \acrshort{SVP64}.
 \end{enumerate}
 
 The above tasks are planned to be done during Milestones 2 and 3.
@@ -181,8 +181,8 @@ maintenance.
 Plannig during Milestone 1 resulted in the following tasks for VanTosh:
 
 \begin{enumerate}
-  \item Research available C libraries to be used with custom SVP64 routines.
-  \item Write several SVP64 routines implementing functionality from those libraries.
+  \item Research available C libraries to be used with custom \acrshort{SVP64} routines.
+  \item Write several \acrshort{SVP64} routines implementing functionality from those libraries.
 \end{enumerate}
 
 The idea of the project is to be as general as possible, which imposes limitations
@@ -191,6 +191,6 @@ C libraries researched will done and documented during Milestone 2
 (see Section \ref{chap:libc}, page \pageref{chap:libc}).
 
 Once the choice a C library has been made, the next goal is to continue working on
-several string and memory routines to leverage the capabilities of SVP64,
+several string and memory routines to leverage the capabilities of \acrshort{SVP64},
 and demonstrate intergration with a standard test framework.
 
