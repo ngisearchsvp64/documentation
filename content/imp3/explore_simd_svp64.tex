@@ -8,7 +8,8 @@
 \section{Exploring Several Important SIMD Operations}
 \subsection{Vector Permute - \texttt{vperm}}
 
-A very useful operation present in PowerISA as part of the VSX/VMX.
+A very useful operation present in PowerISA as part of the
+\acrshort{VSX}/\acrshort{VMX}.
 A reference implementation of vector permute in Python looks like this:
 
 \begin{verbatim}
@@ -28,13 +29,15 @@ The third operand, \texttt{vec3} is used to determine whether an element from
 \texttt{vec1} or \texttt{vec2} gets stored in the resulting vector.
 
 \begin{itemize}
-  \item For each element, if element in \texttt{vec3} is equal to 0, store
-        corresponding element from \texttt{vec1} in the result.
+  \item For each \texttt{i}'th element in \texttt{vec3}, if element is
+        equal to 0, store corresponding element from \texttt{vec1} in the result.
   \item Otherwise, store corresponding element from \texttt{vec2} in the result.
 \end{itemize}
 
 No re-arrangement happens (not a shuffle) and in hardware, this might be
 implemented as 16 2-in 1-out byte multiplexers.
+
+\subsubsection{SVP64 Draft Implementation}
 
 An SVP64 implementation for this operation can be found
 \href{https://git.vantosh.com/ngisearch/glibc-svp64/src/branch/master/svp64-port/svp64/vperm_svp64.s}{here}.
@@ -60,7 +63,9 @@ OR'd with the result, which will provide the final \texttt{vperm} output.
 
 \subsection{Shuffle}
 
-Shuffle is a useful operation present in the Intel AVX extension.
+Shuffle is a useful operation present in the Intel AVX extension, and it allows
+the to move/permute bytes of vector \texttt{a} based on the bytes of vector
+\texttt{b}.
 Particular variant in question is 256-bit, 8-bit element (32x8) inputs.
 The instruction is split into two 16-element lanes, for legacy reasons.
 
@@ -85,11 +90,38 @@ def ref__mm256_shuffle_epi8(a, b):
 With each lane the following happens:
 
 \begin{itemize}
-  \item For each element in lane, check if MSb of element in vector \texttt{b}
-        is set. If set, clear the corresponding result element.
+  \item For each \texttt{i}'th element in lane, check if \acrfull{MSb} of
+        element in vector \texttt{b} is set. If set, clear the corresponding
+        result element.
   \item Otherwise, use the lower nibble of element in \texttt{b} as an index
         for vector \texttt{a} and store in result.
 \end{itemize}
 
 The difference with the second lane is that an offset of 16 is added (since
-second lane can \textit{only} access its own elements).
+each lane can \textit{only} access its own elements).
+
+\subsubsection{SVP64 Draft Implementation}
+
+\subsection{Movemask}
+
+An instruction from Intel AVX, which creates a bit mask from a source vector.
+
+\begin{verbatim}
+# Operates on 32*8 (256-bit) value
+def ref_movemask_epi8(s1):
+    res = 0 # 32-bit value
+    for i in range(32): # setvl VL=32
+        t1 = s1[i] & 0x80
+        if t1 == 0x80:
+            t2 = 1<<i
+            res |= t2
+
+    return res
+\end{verbatim}
+
+\begin{itemize}
+  \item For each \texttt{i}'th element in \texttt{s1}, if \acrshort{MSb} of
+        element \texttt{i} is equal to 1, set bit \texttt{i} of the result.
+\end{itemize}
+
+\subsubsection{SVP64 Draft Implementation}
