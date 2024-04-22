@@ -103,17 +103,17 @@ comes with the NGI Family: the "added-value" activities, such
 as training, sharing of ideas, and Mentoring on strategies for
 Business Development.
 
-Now will be a brief introduction on the work done by the three consortium
-partners, Red Semiconductor, VectorCamp and VanTosh.
+Now will be a brief introduction on the work planned/done by the three
+consortium partners, Red Semiconductor, VectorCamp and VanTosh.
 
 \section{Red Semiconductor}
 
-Red Semiconductor was in charge of planning and organisation of the milestones,
-as well as documentation and providing assistance to VectorCamp and Vantosh
-by writing SVP64 routines and explaining the features relevant to development
-within this project.
+Red Semiconductor was in charge of planning and organisation of the milestones.
+For milestones 2 and 3 onwards, Red focused on documentation and providing
+assistance to VectorCamp and Vantosh by writing SVP64 routines and explaining
+the features relevant to development within this project.
 
-For milestone 3, a logo for the project had been drawn up in June 2023.
+During Jun 2023, a logo for the project was drawn up.
 
 Interview was done in July 2023 which covered significance of SVP64 and
 the importance of funding by NGI and NLnet.
@@ -144,8 +144,16 @@ the same Fat Runtime functionality as on x86 is implemented,
 so that the same binary can run and take advantage of SVE2 if available.
 Furthermore, Loongson LSX support is under review and we are in progress of
 porting it to even more architectures.
-Now, as part of this NGI Search project, the goal is to port it to LibreSOC
-and SVP64 in particular. Due to SVP64 being a Vector architecture,
+
+During Milestone 1, VectorCamp worked together with Red and VanTosh to plan out
+the project work relating to the use of SVP64 in Vectorscan, and also provided
+research and expertise in SIMD in general.
+
+The primary goal for VectorCamp for NGI Search is to port
+Vectorscan to the LibreSOC architecture, SVP64 in particular to demonstrate
+regex search capabilities.
+
+Due to SVP64 being a Vector architecture,
 and not a SIMD one, and with Vectorscan’s whole codebase designed around SIMD,
 this is not such a straightforward task.
 
@@ -165,18 +173,24 @@ The above tasks are planned to be done during Milestones 2 and 3.
 
 \section{VanTosh}
 
-VanTosh has the tasks of:
+During Milestone 1, VanTosh contributed to the writing of further
+milestone plans alongside Red and VectorCamp. In particular, VanTosh
+provided its expertise in C, standard libraries, and software compilation and
+maintenance.
+
+Plannig during Milestone 1 resulted in the following tasks for VanTosh:
 
 \begin{enumerate}
-  \item Researching available C libraries to be used with custom SVP64 routines.
-  \item Writing several SVP64 routines implementing functionality from those libraries.
+  \item Research available C libraries to be used with custom SVP64 routines.
+  \item Write several SVP64 routines implementing functionality from those libraries.
 \end{enumerate}
 
 The idea of the project is to be as general as possible, which imposes limitations
 on the standard C library choice for this project. Full comparison of various
-C libraries researched will done and documented during Milestone 2.
-[Link to report section??]
+C libraries researched will done and documented during Milestone 2
+(see Section \ref{chap:libc}, page \pageref{chap:libc}).
 
 Once the choice a C library has been made, the next goal is to continue working on
 several string and memory routines to leverage the capabilities of SVP64,
 and demonstrate intergration with a standard test framework.
+
