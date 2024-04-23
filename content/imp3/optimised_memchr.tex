@@ -83,7 +83,7 @@ used to check if no match occurred. This end address is stored in register 7.
   # test CTR, stop if any cmp failed
   sv.bc/all 0, *2, .inner # -0x10
 \end{verbatim}
-This is the main bit of SVP64 code (running in Vertical-First mode).
+This is the main bit of SVP64 code (running in Horizontal-First mode).
 The snippet of code will iterate 4 times as specified by immediate
 in \texttt{setvl} (checking one byte with each iteration).
 Load byte from memory at address stored in register 3.
