@@ -1,0 +1,57 @@
+\chapter{Commentary and Conclusions}
+
+\acrfull{SV} (\acrshort{SVP64} being a particular variant for \acrshort{POWER}
+ISA) is a powerful extension on top of scalar instructions, if you know the set
+of features it contains, and how to use it.
+
+To demonstrate search pattern algorithms using \acrshort{SVP64}, it was decided
+to integrate code written in this extension into the \texttt{glibc}
+test framework. This exercise has taught us that \acrshort{SV} still requires
+further development.
+
+\section{Red Semiconductor Perspective}
+In particular, hardware considerations need to be thought through.
+Although it is good to abstract away hardware specifics from the programmer,
+it is still necessary to consider how many of \acrshort{SV}'s features can
+actually be implemented in reality.
+
+Many advanced features of SVP64, such as the REMAP system, fail-first,
+predication, element-width overrides etc., are made difficult to use
+by the fact that the reference simulator for the SVP64 specification is
+highly experimental, and doesn't always align with the available documentation.
+A lot of time was spent during Milestones 2 and 3 simply getting around the
+issues of the simulator, and the available assembler notation, and this limited
+the scope of function complexity and optimisation.
+
+\section{VectorCamp}
+
+Existing code base for many projects utilising vector extensions are on the
+order of 100k lines of code or more.
+
+Thus it is unreasonable to refactor the entire codebase using a new vector
+extension, regardless of how performant it may be.
+
+Instead, it is better to gradually upgrade parts of the code (just as is
+happening today with the Rust programming language), by substituting specific
+vector extension (AVX, NEON, etc.) functions with optimised SVP64 code instead.
+
+This is why during Milestone 3, we went through the exercise of researching
+common SIMD operations, and implementing them in SVP64. By having
+implementations of standard operations (such as shuffle, movemask, etc.) will
+allow gradual refactoring.
+
+However, due to the lack of specific byte manipulation instructions, and
+difficulty in configuration setup of the REMAP system, these implementations
+turned to be either much bigger than desired, or only partially implemented.
+
+\section{Future Work}
+
+Based on the experience of the consortium, Red has learned enough to move from
+the purely theoretical towards a real functional HW implementation.
+In practice, this has caused us to have a fundamental rethink of the concepts
+and going back to the original theoretical ideas we're now developing a hardware
+solution, different from \acrshort{SV}, that delivers equivalent and
+advanced functionality.
+
+In this, the \acrshort{NGI} Search process has been informative and educational
+as to future developments (which may be the subject of future grant applications).
