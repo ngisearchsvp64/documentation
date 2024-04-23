@@ -1,29 +1,68 @@
 \chapter{Commentary and Conclusions}
 
+During the "SVP64 Power ISA Vector Optimisation for Search" project, the
+consortium of RED, VectorCamp, and VanTosh has had the following objectives:
+
+\begin{itemize}
+  \item Learn about practical capabilities of SVP64 in its current iteration
+  \item Research and plan out necessary work required to De-SIMDfy the
+        Vectorscan code base (make it scalar portable)
+  \item Write experimental string/memory routines using SVP64 assembler.
+  \item Integrate the above routines within a standard C library test framework.
+  \item Document and report SVP64 and simulator for future user (and report
+        back on issues to developers of SV, if any occurred)
+  \item Research common SIMD routines used in Vectorscan, and work on draft
+        implementations in SVP64 (enables VectorScan support for scalar
+        architectures)
+  \item Report on how SVP64 can optimise search for future users and projects
+\end{itemize}
+
 \acrfull{SV} (\acrshort{SVP64} being a particular variant for \acrshort{POWER}
-ISA) is a powerful extension on top of scalar instructions, if you know the set
-of features it contains, and how to use it.
+ISA) is a powerful extension on top of scalar instructions, if the software
+developer understands the set of features it contains, and how to use it.
 
 To demonstrate search pattern algorithms using \acrshort{SVP64}, it was decided
 to integrate code written in this extension into the \texttt{glibc}
-test framework. This exercise has taught us that \acrshort{SV} still requires
-further development.
+test framework.
+Although the present state of SVP64's development and maturity has enabled RED,
+VectorCamp and Vantosh to undertake specific algorithm code developments for
+evaluation and demonstration purposes, this project has taught us that
+\acrshort{SV} still requires further development to make is a practicable
+extension to the POWER ISA. Moreover, in order to realise the benefits of SVP64
+in a real-world environment, its ISA-based features require hardware
+developments to the microprocessor architecture.
 
-\section{Red Semiconductor Perspective}
-In particular, hardware considerations need to be thought through.
-Although it is good to abstract away hardware specifics from the programmer,
-it is still necessary to consider how many of \acrshort{SV}'s features can
-actually be implemented in reality.
+\section{Red Semiconductor - a Hardware Perspective}
+Red Semiconductor has concluded from this project that SVP64 has reached a
+stage of its development where hardware realisation must be carefully
+considered. Research undertaken during this project has revealed that whereas
+certain SVP64 features can be implemented in a straightforward manner, there
+are many that require investigation by chip architects with microprocessor
+design expertise in order to specify and implement their functionality.
+
+Although for this project it has been beneficial to abstract away hardware
+specifics from the programmer, it is still necessary to consider how many of
+\acrshort{SV}'s features can actually be implemented in reality,
+balancing the overall performance benefits with practical issues like the
+complexity of the hardware needed, and its cost in silicon area and power
+consumption when compared with other ISAs and Microprocessor chips.
 
 Many advanced features of SVP64, such as the REMAP system, fail-first,
-predication, element-width overrides etc., are made difficult to use
-by the fact that the reference simulator for the SVP64 specification is
-highly experimental, and doesn't always align with the available documentation.
-A lot of time was spent during Milestones 2 and 3 simply getting around the
-issues of the simulator, and the available assembler notation, and this limited
-the scope of function complexity and optimisation.
+predication, element-width overrides etc., are currently difficult to use
+due to the fact that the reference simulator for the SVP64 specification is
+still in the experimental phase of its development, and during this project the
+code writers discovered that its functionality, and doesn't always align with
+the available documentation.
 
-\section{VectorCamp}
+This issue will be fed back to the individuals who developed the simulator in
+order to guide their further work. Nevertheless, a lot of time was spent
+during Milestones 2 and 3 simply getting around the issues of the simulator,
+and the available assembler notation, and this limited the scope of function
+complexity and optimisation, but we believe it will be valuable 'user' input
+to its developers, enabling them to create a better functioning tool
+for future use.
+
+\section{VectorCamp - a Software Perspective}
 
 Existing code base for many projects utilising vector extensions are on the
 order of 100k lines of code or more.
@@ -37,8 +76,8 @@ vector extension (AVX, NEON, etc.) functions with optimised SVP64 code instead.
 
 This is why during Milestone 3, we went through the exercise of researching
 common SIMD operations, and implementing them in SVP64. By having
-implementations of standard operations (such as shuffle, movemask, etc.) will
-allow gradual refactoring.
+implementations of standard operations (such as shuffle, movemask, etc.)
+gradual refactoring can be accomplished in the future.
 
 However, due to the lack of specific byte manipulation instructions, and
 difficulty in configuration setup of the REMAP system, these implementations
@@ -46,12 +85,42 @@ turned to be either much bigger than desired, or only partially implemented.
 
 \section{Future Work}
 
-Based on the experience of the consortium, Red has learned enough to move from
-the purely theoretical towards a real functional HW implementation.
-In practice, this has caused us to have a fundamental rethink of the concepts
-and going back to the original theoretical ideas we're now developing a hardware
-solution, different from \acrshort{SV}, that delivers equivalent and
-advanced functionality.
+This project has been the first attempt by attempt by multiple organisations
+to utilise the capabilities embodied in the SVP64 concept in real-world
+applications, and much has been learnt about the innovative features as well
+as the challenges and limitations of applying SVP64 to existing
+coding methodology and applications.
 
-In this, the \acrshort{NGI} Search process has been informative and educational
-as to future developments (which may be the subject of future grant applications).
+Based on the experience of the consortium, Red has learned enough to move from
+the purely theoretical towards a real functional HW specification
+and implementation.
+In practice, this has caused us to have a fundamental rethink of the concepts
+realised in SVP64, and has led to us going back to the original theoretical
+ideas that inspired its development in order to develop a practicable hardware
+solution, which will differ from \acrshort{SV}, in order to deliver
+advanced functionality that is required by developers of systems for next
+generation internet search and infrastructure projects where key driving force
+is likely to include the use of AI for optimised search, and cryptography to
+maintain users' privacy and security of data.
+
+The NGI Search collaborative project has proved to be a successful knowledge
+platform for the contributors, and has started to make connections between the
+deep research history behind the SVP64 concept and its potential use in
+real-world applications. The teams have experienced the challenges associated
+with moving the excellent theoretical concepts previously demonstrated in
+isolated code snippets into the realm of practical usage within large code
+bases comprising many complex algorithms. The project has reinforced the
+inspirations behind SVP64 and it raison d’être, while exposing the challenges
+associated with its applicability to the POWER ISA, and its ease of use when
+integrating with traditional coding methodologies. The collaborators have
+already considered future development work, including the alignment of future
+ISA extensions with pre-existing performance-boosting methodologies like SIMD,
+and how a hardware architecture can then be implemented to optimise for the
+performance benefits that can be obtained from the modified ISA.
+
+It is highly likely that the members of this project will collaborate on future
+developments and seek grant funding where appropriate. The teams also hope that
+this published work will inspire others individuals and organisations to join
+the consortium or work independently on future vector extensions.
+
+We would like to thank…….
