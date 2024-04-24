@@ -63,6 +63,7 @@ to its developers, enabling them to create a better functioning tool
 for future use.
 
 \section{VectorCamp - a Software Perspective}
+\label{sec:vecotorscansoftwareperspective}
 
 Existing code base for many projects utilising vector extensions are on the
 order of 100k lines of code or more.
@@ -82,6 +83,30 @@ gradual refactoring can be accomplished in the future.
 However, due to the lack of specific byte manipulation instructions, and
 difficulty in configuration setup of the REMAP system, these implementations
 turned to be either much bigger than desired, or only partially implemented.
+
+
+\section{VanTosh -  an ISA \& Software Perspective}
+
+After understanding SVP64 much better, it is apparent that the extension has
+the possiblity to introduce new concepts to the \acrshort{POWER} \acrshort{ISA},
+however the disadvantages outway the advantages, while we have been able to
+reduce the number of instructions, the legiability of code and the maintanability
+becomes much more complex.
+After careful consideration there are simpler ways to achieve several optimizations
+SVP64 highlights and that can be added to the \acrshort{POWER} \acrshort{ISA},
+such as Vector Element Move or Shift.
+
+From a higher software ecosystem, without operating system support or library support
+SVP64, as suggested in \label{sec:vecotorscansoftwareperspective} by VectorCamp,
+would be cumbersome to convert and would be useless.
+In our previous efforts to get Linux Distribution support to SVP64, our effort to
+get a minimal \acrshort{POWER} architecture ``ppc64sffs" running, we were able
+to get the base system supported for \href{https://www.powerel.org}{PowerEL},
+\href{https://www.debian.org}{Debian}, and \href{https://gentoo.org}{Gentoo}.
+However we never were able to verify the \acrshort{POWER} \acrfull{SFFS}
+The benefit of adding SVP64 never got proven in detail and while this project
+has been able to prove a better cycle usage to reduce the number of instruction
+cycles, it does not yet prove the increase of speed that would be inferred.
 
 \section{Future Work}
 
@@ -123,4 +148,4 @@ developments and seek grant funding where appropriate. The teams also hope that
 this published work will inspire others individuals and organisations to join
 the consortium or work independently on future vector extensions.
 
-We would like to thank…….
+We would like to thank the Libre-SOC project.
