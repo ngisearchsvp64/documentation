@@ -37,6 +37,22 @@ The third operand, \texttt{vec3} is used to determine whether an element from
 No re-arrangement happens (not a shuffle) and in hardware, this might be
 implemented as 16 2-in 1-out byte multiplexers.
 
+\begin{verbatim}
+  mtspr 9, 2 # element width = 64, working in 2 blocks of 8 bytes
+  setvl 1, 0, 4, 0, 1, 1 # maxvl=4
+  # This creates a mask
+  sv.cmpb *maskReg_start, *vec3_start, %temp1_start
+  sv.and *vecResult_start, *vec1_start, *maskReg_start
+  sv.cmpb *maskReg_start, *vec3_start, temp2_start
+  sv.and *temp3_start, *vec2_start, *maskReg_start
+  sv.or *vecResult_start, *vecResult_start, *temp3_start
+  sv.bc 18,0,0x8
+  b .end # -0x18
+.end:
+  # this could be replaced by return call
+  nop
+\end{verbatim}
+
 \subsubsection{SVP64 Draft Implementation}
 
 An SVP64 implementation for this operation can be found
