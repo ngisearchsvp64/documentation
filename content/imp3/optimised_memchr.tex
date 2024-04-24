@@ -12,7 +12,7 @@
 
 % TODO: Use Github link
 The function was implemented within Python framework can be found
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/fd6de0a7fd050230eaf891abfd510ca83cd8ab62/svp64-port/optimised_variants/test_memchr.py}{here}.
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/master/svp64-port/experimentation/test_memchr.py}{here}.
 \begin{verbatim}
   cmpi 0,1,5,0 # Check if n==0
   bc 12, 2, .no_match # 0x44
@@ -104,7 +104,8 @@ from \texttt{memchr}).
 The conditional branch (\texttt{sv.bc}) in \texttt{BO=0} mode will decrement
 CTR, then branch only if CTR is non-zero (haven't finished searching the
 byte array), \textit{and} the Condition Field 0 bit 2 (EQ) is cleared
-(not matching character).
+(not matching character). For more information on branch instructions,
+see Book I, Section 2.4 of the PowerISA specification.
 
 \begin{verbatim}
 # Check for no match, add offset to get actual found address
