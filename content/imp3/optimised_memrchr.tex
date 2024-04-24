@@ -1,0 +1,97 @@
+% SPDX-License-Identifier: LGPL-3-or-later
+% Copyright 2023 VectorCamp
+% Copyright 2023 Red Semiconductor Ltd.
+% Copyright 2023 VanTosh
+%
+% Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
+% https://www.ngisearch.eu/, EU Programme 101069364.
+
+\section{Optimised \texttt{memrchr} Function}
+
+\subsection{The code}
+
+% TODO: Use Github link
+The function was implemented within Python framework can be found
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/master/svp64-port/experimentation/test_memrchr.py}{here}.
+
+The start and end bits of code have been skipped (same as \texttt{memchr}).
+\begin{verbatim}
+  mtspr 9, 5 # move r5 to CTR
+  add 7,3,5 # (start address+len-1)
+  addi 7,7,-1 # Now points to last address of array s
+  # VL (and r1) = MIN(CTR,MAXVL)
+  setvl 1,0,4,0,1,1" # maxvl=4
+  # load VL bytes (update r7 addr, current pointer)
+.inner:
+  sv.lbzu/pi *16, 0xffff(7)
+  # cmp against zero, truncate VL
+  sv.cmp/ff=eq/vli *0,1,*16,4
+  # test CTR, stop if any cmp failed
+  sv.bc/all 0, *2, .inner # -0x10
+
+  # Check for no match, add offset to get actual found address
+  # If pointer is less than starting address 3, no match.
+  cmp 0,1,7,3
+  bc 12, 0, .no_match # 0x14, check LT bit, if set, branch
+
+  # Adjust pointer in Reg7 because search ends at multiples of
+  # VL value
+  setvl 6,0,1,0,0,0 # Get current value of VL
+  subfic 6,6,5" # calculate offset for found char - (maxvl+1)
+  # Reg 3 will now be found address, or one byte outside of array
+  add 3,7,6
+  b .end # 0x8
+\end{verbatim}
+
+\subsection{Code explanation}
+Only the differences between \texttt{memchr} and \texttt{memrchr} are going to
+be discussed
+
+\begin{verbatim}
+  add 7,3,5 # (start address+len-1)
+  addi 7,7,-1 # Now points to last address of array s
+\end{verbatim}
+Register 7 is stores the current address to load from. As \texttt{memrchr}
+begins from the last byte of array, the number of bytes \texttt{n} needs to be
+added. However since addresses begin from 0, 1 must be subtracted to get the
+last byte.
+
+\begin{verbatim}
+.inner:
+  sv.lbzu/pi *16, 0xffff(7)
+  # cmp against zero, truncate VL
+  sv.cmp/ff=eq/vli *0,1,*16,4
+  # test CTR, stop if any cmp failed
+  sv.bc/all 0, *2, .inner # -0x10
+\end{verbatim}
+There is one main difference between \texttt{memchr} and \texttt{memrchr} in
+this portion of code. Instead of incrementing the address after loading,
+the code decrements instead. The Python SVP64Asm class didn't accept
+\texttt{-1} argument, so \texttt{0xFFFF} is used to represent \texttt{-1}
+in 16-bit 2's complement (\texttt{lbzu} takes a 16-bit signed integer
+as an immediate).
+
+\begin{verbatim}
+# Check for no match, add offset to get actual found address
+# If pointer is less than starting address 3, no match.
+cmp 0,1,7,3
+bc 12, 0, 0x14 # check LT bit, if set, branch
+\end{verbatim}
+
+Compare the current address at register 7 with the starting address.
+If the current address is smaller (less than,
+LT Condition Register field bit 0), that means no match occurred.
+In such a case jump to \texttt{.no\_match}.
+
+\begin{verbatim}
+# Adjust pointer in Reg7 because search ends at multiples of
+# VL value
+setvl 6,0,1,0,0,0 # Get current value of VL
+subfic 6,6,5" # calculate offset for found char - (maxvl+1)
+# Reg 3 will now be found address, or one byte outside of array
+add 3,7,6
+b .end # 0x8
+\end{verbatim}
+This snippet of code is similar except for the offset (since the bytes are
+being accessed in reverse). Also the current address is in Register 7, not 3.
+
