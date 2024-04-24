@@ -16,9 +16,9 @@ vector length based on this early termination. This feature is very useful
 for string search and copy functions, with strncpy being an example available
 in the LibreSOC [repo]() **TODO: ADD LINK**.
 
-## SimpleV assistance to VectorCamp and Vantosh
+## SimpleV assistance to VectorCamp and VanTosh
 
-- Provide assistance to VectorCamp and Vantosh with currently implemented
+- Provide assistance to VectorCamp and VanTosh with currently implemented
 features of SimpleV.
 - To find causes and/or workarounds with code bugs due to the ISACaller
 simulator (the simulator supporting PowerISA 3.0 and implements current SimpleV
@@ -49,7 +49,7 @@ cases.
 
 VectorCamp has done the initial work of studying glibc,
 creating wrapper code, and writing up an example function, `memchr()`,
-for Vantosh and Red to use as a template (from which the other functions were
+for VanTosh and Red to use as a template (from which the other functions were
 written up).
 
 ## Documentation
