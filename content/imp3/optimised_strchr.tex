@@ -1,0 +1,50 @@
+% SPDX-License-Identifier: LGPL-3-or-later
+% Copyright 2023 VectorCamp
+% Copyright 2023 Red Semiconductor Ltd.
+% Copyright 2023 VanTosh
+%
+% Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
+% https://www.ngisearch.eu/, EU Programme 101069364.
+
+\section{Optimised \texttt{strchr} Function}
+
+\subsection{The code}
+
+% TODO: Use Github link
+The function was implemented within Python framework can be found
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/master/svp64-port/experimentation/test_strchr.py}{here}.
+
+As \texttt{strchr} is pretty much the same in functionality to \texttt{memchr}
+(other than length of string needing to be calculated by \texttt{strchr}), so
+only the additional code which calculates the length of the string will be shown.
+
+\begin{verbatim}
+  mtspr 9, 5, # move r5 to CTR
+  addi 7, 3, 0
+  # VL (and r1) = MIN(CTR,MAXVL)
+  setvl 1,0,%d,0,1,1 # maxvl=4
+  # load VL bytes (update r7 addr, current pointer)
+  sv.lbzu/pi *16, 1(7)
+  # cmp against zero, truncate VL
+  sv.cmpi/ff=eq/vli *0,1,*16,0
+  # test CTR, stop if any cmp failed
+  sv.bc/all 0, *2, -0x10
+  # Adjust pointer in Reg 7 because search ends at multiples of
+  # VL value
+  setvl 6,0,1,0,0,0 # Get current value of VL
+  addi 6,6,-4 # (-1*maxvl), calculate offset for found char
+  add 7,7,6
+  # Perform (GPR[7]-GPR[3]) to get string length
+  subf 5,3,7
+\end{verbatim}
+
+After this code, \texttt{memchr} code is used as before as the length
+\texttt{n} is now known.
+This code is also similar to the main SVP64 code of \texttt{memchr}, except here
+the loaded byte is compared against the immediate \texttt{0x00},
+or a \texttt{NULL} (character used to terminate strings in C).
+
+Vectorised Conditional Branch \texttt{sv.bc} mode \texttt{BO=4} didn't work,
+so the example code is limited to strings of length specified in Register 5
+(as this register specifies the value of the Count Register used to keep track
+of max loop iterations).
