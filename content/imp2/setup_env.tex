@@ -32,6 +32,9 @@ $: schroot -c glibc-svp64
 (glibc-svp64)#: ./binutils-gdb-install
 (glibc-svp64)#: ./hdl-dev-repos
 (glibc-svp64)#: exit
+(glibc-svp64)$: cd ~/src
+(glibc-svp64)$: git clone https://github.com/ngisearchsvp64/shell-scripts.git
+(glibc-svp64)$: cd shell-scripts/scripts
 (glibc-svp64)$: ./ngi-search-glibc-svp64
 \end{verbatim}
 
@@ -69,6 +72,6 @@ shell script. The script works with the LibreSOC environment, however the
 actual \LaTeX{} document can be generated on any system.
 
 \begin{verbatim}
-(glibc-svp64)$: cd ~/dev-env-setup
+(glibc-svp64)$: cd ~/src/shell-scripts/scripts
 (glibc-svp64)$: ./ngi-search-docs
 \end{verbatim}
