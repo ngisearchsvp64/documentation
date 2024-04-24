@@ -1,21 +1,76 @@
 \chapter{Commentary and Conclusions}
 
-During the "SVP64 Power ISA Vector Optimisation for Search" project, the
-consortium of RED, VectorCamp, and VanTosh has had the following objectives:
+The \textbf{\acrshort{SVP64} \acrshort{POWER} ISA Vector Optimisation for Search}
+project was conceived by RED Semiconductor, VectorCamp and VanTosh to build on
+a body of previously published open-source development work that had proposed
+extensions to the OpenPOWER \acrfull{ISA} that would make it more powerful and
+efficient for algorithmic computation such as that utilised in internet search
+applications. It is envisioned that optimisation of search will bring benefits
+in speed and accuracy of searches, and reduce the power consumption required to
+perform them.
+Furthermore, efficiency of algorithmic computation is expected to deliver
+security benefits in terms of personal privacy and data security
+across the internet.
+
+The collaborators have a broad spectrum of relevant technical knowledge, as
+well as being businesses which take computing concepts into real world
+applications:
+\begin{itemize}
+  \item RED Semiconductor is a developer of computing IP solutions that embrace
+  microprocessor hardware architecture features and the command-and-control
+  software that invokes them. RED researches incumbent architectures and
+  creates new additional features to overcome their limitations in regard to
+  processing performance for next generation demands.
+  \item VectorCamp specialises in optimising software utilising \acrshort{SIMD}
+  and other optimisation techniques, to deliver performance improvements on
+  hardware platforms including Arm, Intel and \acrshort{POWER}. VectorCamp has
+  developed a high performance pattern matching software tool called Vectorscan.
+  \item VanTosh is a provider of IT Services, and has full-stack expertise
+  internet and search ecosystems. VanTosh offers software development and
+  operations services designed to optimised the effectiveness of IT use.
+\end{itemize}
+
+The combination of RED’s expertise in hardware, VectorCamp’s in software and
+VanTosh’s in IT ecosystems makes the consortium ideally placed for research and
+development into new optimised solutions for internet search, and the three
+organisations have previously been involved in projects concerning
+\acrshort{SVP64} and \acrshort{POWER} ISA.
+
+Key objectives of the
+\textbf{\acrshort{SVP64} \acrshort{POWER} ISA Vector Optimisation for Search}
+project, undertaken by the consortium of RED, VectorCamp, and VanTosh
+has had the following objectives:
 
 \begin{itemize}
-  \item Learn about practical capabilities of SVP64 in its current iteration
-  \item Research and plan out necessary work required to De-SIMDfy the
-        Vectorscan code base (make it scalar portable)
-  \item Write experimental string/memory routines using SVP64 assembler.
-  \item Integrate the above routines within a standard C library test framework.
-  \item Document and report SVP64 and simulator for future user (and report
-        back on issues to developers of SV, if any occurred)
-  \item Research common SIMD routines used in Vectorscan, and work on draft
-        implementations in SVP64 (enables VectorScan support for scalar
-        architectures)
-  \item Report on how SVP64 can optimise search for future users and projects
+  \item Explore the practical capabilities of \acrshort{SVP64} in its current
+        iteration for internet search applications
+  \item Research and plan necessary work required to “De-SIMDfy” the Vectorscan
+        code base in order to make it scalar-portable
+  \item Write experimental string/memory routines using \acrshort{SVP64}
+        assembler
+  \item Integrate the above routines within a standard C library test framework
+  \item Document and report \acrshort{SVP64} and its simulator for future
+        developers and users (and report back on issues to developers of
+        \acrshort{SV}, if any occurred)
+  \item Research common \acrshort{SIMD} routines used in Vectorscan, and work
+        on draft implementations in \acrshort{SVP64}
+        (enables Vectorscan support for scalar architectures)
+  \item Report on how \acrshort{SVP64} can be applied to optimise search for
+        the benefit of future users and projects
 \end{itemize}
+
+Each of the objectives and tasks was addressed and completed during the
+project, and this report gives detailed descriptions of those tasks and the
+software code created in order to learn about and demonstrate \acrshort{SVP64}’s
+usefulness in optimising search algorithms.
+In the process of completing the project a number of challenges were
+encountered and largely overcome in relation to the current stage of
+development of \acrshort{SVP64} and its readiness to be applied to microprocessor
+hardware architectures.
+The consortium has concluded that in concept \acrshort{SVP64} permits software developers
+to optimise a wide array of algorithms, including for applications other
+than search, but in order for realistic hardware implementation
+further development is required.
 
 \acrfull{SV} (\acrshort{SVP64} being a particular variant for \acrshort{POWER}
 ISA) is a powerful extension on top of scalar instructions, if the software
