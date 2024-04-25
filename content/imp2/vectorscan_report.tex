@@ -57,7 +57,7 @@ In case \acrshort{SIMD} support for that architecture exists in SIMDe,
 then Vectorscan would take advantage of that and perform better than with a scalar-only emulation of the \acrshort{SIMD} intrinsics.
 \par
 
-Finally, SIMDe provides an alternative backend of emulating the x86 intrinsics with native SIMD intrinsics,
+Finally, SIMDe provides an alternative backend of emulating the x86 intrinsics with native \acrshort{SIMD} intrinsics,
 in order to compare performance of that and Vectorscan's own backend.
 This will be especially useful in finetuning performance.
 \par
@@ -134,7 +134,7 @@ by the decisions made. \par
 Fortunately Simple-V is designed with such portability in mind. Just like
 with Cray Vectors, \acrshort{ARM} SVE/2, and \acrfull{RVV}, Scalable Vector Loops
 may be written once, treating the assembler as if it was more
-akin to an Architecturally-independent and stable "Software API".
+akin to an Architecturally-independent and stable "Software \acrshort{API}".
 With Scalable Vectors, Programmers can be confident
 that binary applications written years ago will not need any changes
 to be faster or more power-efficient on future hardware. This is a very

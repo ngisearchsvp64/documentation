@@ -15,7 +15,7 @@ This project consists of a consortium of three companies represented by:
   \item VanTosh - Toshaan Bharvani
 \end{itemize}
 
-\subsection{What is \acrshort{SVP64} and why is \acrshort{SVP64} relevant to NGI Search?}
+\subsection{What is \acrshort{SVP64} and why is \acrshort{SVP64} relevant to \acrshort{NGI} Search?}
 
 \acrfull{SVP64} is a Cray-style vectorisation system which
 turns scalar register and scalar instructions into vector operations,
@@ -30,13 +30,13 @@ As for relevance to \acrfull{NGI} Search, it may seem like the Internet is a
 Software-only enviroment, in actuality this software must run on hardware.
 As a consortium, we are addressing the fundamental performance and
 power-effieciency of this hardware, by verifying that low-level memory,
-string, regular-expression, and Machine Learning algorithms run optimally
+string, regular-expression, and \acrfull{ML} algorithms run optimally
 on \acrshort{SVP64}.
 
 The biggest difference between other vector extensions provided by Intel,
 \acrshort{ARM}, etc., is that if we find \acrshort{SVP64} to be sub-optimal, an opportunity is
 provided to us by \acrshort{NGI} Search to investigate how to actually improve the
-\acrshort{SVP64} extension to \acrshort{POWER} ISA.
+\acrshort{SVP64} extension to \acrshort{POWER} \acrshort{ISA}.
 
 By doing this research, not only \acrshort{SVP64} benefits, but \textit{everyone's} algorithms
 benefit from increased performance, and reduced energy requirements.
@@ -68,7 +68,7 @@ benefit from increased performance, and reduced energy requirements.
 \subsection{About this project}
 
 The \acrshort{SVP64} Extension is optimised to greatly simplify mathematical calculations,
-providing benefits in the fields of Cryptography, Machine Learning,
+providing benefits in the fields of Cryptography, \acrshort{ML},
 Autonomous systems, Audio/Video, \acrfull{DSP} and many other general-purpose areas.
  
 The building-blocks of \acrshort{SVP64} are designed to provide by combination these
@@ -87,7 +87,7 @@ team and there will be cross-organisational cooperation on all Milestones.
 The ultimate goal is to create a progressive family of micro-processors
 and this grant allows to validate the critical elements of the
 \acrshort{SVP64} extension, ensuring that the processor family is efficient at string,
-data, and machine learning, as wel as provides support for standard open
+data, and \acrshort{ML}, as wel as provides support for standard open
 source software libraries.
 
 \subsection{How is the \acrshort{NGI} Search money helping you?}
@@ -150,7 +150,7 @@ Particularly for \acrshort{ARM}, Neon/\acrshort{ASIMD} support
 is 100\% while there is ongoing work to port the code to \acrshort{SVE2} and
 the same Fat Runtime functionality as on x86 is implemented,
 so that the same binary can run and take advantage of \acrshort{SVE2} if available.
-Furthermore, Loongson LSX support is under review and we are in progress of
+Furthermore, Loongson \acrshort{LSX} support is under review and we are in progress of
 porting it to even more architectures.
 
 During Milestone 1, VectorCamp worked together with Red Semiconductor and VanTosh to plan out
@@ -186,7 +186,7 @@ milestone plans alongside Red and VectorCamp. In particular, VanTosh
 provided its expertise in C, standard libraries, and software compilation and
 maintenance.
 
-Plannig during Milestone 1 resulted in the following tasks for VanTosh:
+Planning during \acrshort{IMP}1 resulted in the following tasks for VanTosh:
 
 \begin{enumerate}
   \item Research available C libraries to be used with custom \acrshort{SVP64} routines.
@@ -195,7 +195,7 @@ Plannig during Milestone 1 resulted in the following tasks for VanTosh:
 
 The idea of the project is to be as general as possible, which imposes limitations
 on the standard C library choice for this project. Full comparison of various
-C libraries researched will done and documented during Milestone 2
+C libraries researched will done and documented during \acrshort{IMP}2
 (see Section \ref{chap:libc}, page \pageref{chap:libc}).
 
 Once the choice a C library has been made, the next goal is to continue working on
