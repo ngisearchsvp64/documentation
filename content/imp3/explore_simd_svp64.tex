@@ -63,9 +63,9 @@ OR'd with the result, which will provide the final \texttt{vperm} output.
 
 \subsection{Shuffle}
 
-Shuffle is a useful operation present in the Intel AVX extension, and it allows
-the to move/permute bytes of vector \texttt{a} based on the bytes of vector
-\texttt{b}.
+Shuffle is a useful operation present in the Intel \acrshort{AVX} extension,
+and it allows the to move/permute bytes of vector \texttt{a} based on the
+bytes of vector \texttt{b}.
 Particular variant in question is 256-bit, 8-bit element (32x8) inputs.
 The instruction is split into two 16-element lanes, for legacy reasons.
 
@@ -102,8 +102,13 @@ each lane can \textit{only} access its own elements).
 
 \subsubsection{\acrshort{SVP64} Draft Implementation}
 
-The implementation shown below is not fully working due to time constraints.
+The implementation shown below is not fully working due to time constraints
+and issues with running on the simulator.
 Also, only the lower half the bytes in the shuffle is done.
+
+This snippet requires the Element Width Override functionality of
+\acrshort{SVP64} in order to operate on individual bytes contained
+in the vector to be shuffled.
 
 \begin{verbatim}
   setvl 1, 0, 32, 0, 1, 0 # Horizontal-First mode
@@ -120,7 +125,7 @@ Also, only the lower half the bytes in the shuffle is done.
   # Enable REMAP on operand RA,
   # ew=8 (0b11), mm=0, sk=0
   svindex "%d, 0b10000, 4, 3, 0, 0" % (vec_b_start>>2)
-  sv.addi/ew=8 *vec_r_start, *vec_b_start, 0
+  sv.addi/ew=8 *vec_r_start, *vec_a_start, 0
   b .step
 .clear:
   sv.addi *vec_r_start, 0, 0
@@ -130,9 +135,100 @@ Also, only the lower half the bytes in the shuffle is done.
   # upper half TODO
 \end{verbatim}
 
-The snippet above requires the Element Width Override functionality of
-\acrshort{SVP64} in order to operate on individual bytes contained
-in the vector to be shuffled.
+\subsubsection{Breakdown}
+
+\begin{verbatim}
+  setvl 1, 0, 32, 0, 1, 0 # Horizontal-First mode
+  # Create temp where only lower nibble of each element in b set.
+  sv.andi/ew=8 *temp1_start, *vec_b_start, 0x0f
+\end{verbatim}
+
+This code works in Horizontal-First mode to create a copy of vector \texttt{b}
+where the upper nibble of each byte is masked out (because when an element
+from \texttt{b} used to index \texttt{a}, only elements 0-15 are permitted).
+
+\begin{verbatim}
+.lower_loop:
+  sv.andi/ew=8 *temp2_start, vec_b_start, 0x80
+  sv.cmpi/ew=8 cr0, 1, *vec_b_start, 0x80
+  #TODO: branch if b[i]==0x80
+  sv.bc 12, 2, .clear",
+\end{verbatim}
+
+Here each byte/element's \acrshort{MSb} of vector \texttt{b} is tested.
+If the \acrshort{MSb} is set, then the corresponding byte of the result vector
+is cleared. Otherwise the lower nibble of element \texttt{b} is used as an
+index for vector \texttt{a} (done in the next part of code).
+
+\begin{verbatim}
+  # Enable REMAP on operand RA,
+  # ew=8 (0b11), mm=0, sk=0
+  svindex "%d, 0b10000, 1, 3, 0, 0" % (vec_b_start>>2)
+  sv.addi/ew=8 *vec_r_start, *vec_a_start, 0
+  b .step
+\end{verbatim}
+
+The \texttt{svindex} instruction is used to enable Indexed REMAP mode.
+The REMAP system is used to access vector elements according to predefined
+schedule (other then the usual \texttt{0...VL-1}). The Indexed mode allows
+to use elements inside a \acrshort{GPR} (in this case vector \texttt{b})
+as an index to vector \texttt{a} (hence performing a shuffle operation).
+
+The argument settings for the \texttt{svindex} instruction are as follows:
+
+\begin{itemize}
+  \item \texttt{SVG} - The register to use for indexing. The actual
+  \acrshort{GPR} number is shifted by 2 (divided by 4), so if vector \texttt{b}
+  was to start at \acrshort{GPR} \#16, then the \texttt{SVG} would be
+  \texttt{SVG = 16 >> 2 = 4 (or 0b0100)}.
+  \item \texttt{rmm} - REMAP mask. The REMAP can have four schedules, and they
+  can be assigned to the 3 operands (\texttt{RA}, \texttt{RB}, \texttt{RC})
+  and 2 results (\texttt{RT}, \texttt{RS}). This is a 5-bit parameter which
+  specifies which operands and results will use the REMAP system. In this case,
+  only the input \texttt{RA} needs to use the Indexed REMAP mode, as the output
+  is iterated over sequentially (no need for REMAP).
+  \item \texttt{SVd} - \acrshort{SV} REMAP x/y dimension setting. Normally,
+  REMAP schedules have three dimensions, but with the indexed mode, the third
+  dimension is disabled. For straight indexing, this is set to 1.
+  \item \texttt{ew} - Element Width Override setting. \texttt{3 (0b11)}
+  corresponds to 8-bit element values
+  (as the code is processing individual bytes).
+  \item \texttt{SVyx} - Reordering setting, not used here.
+  \item \texttt{mm} - Mask mode. 0 is default mode.
+  \item \texttt{sk} - Skip dimension. Not needed here.
+\end{itemize}
+
+The following prefixed \texttt{addi} instruction will then access the byte
+elements from vector \texttt{a} using the indices stored in vector \texttt{b}.
+
+\begin{verbatim}
+.clear:
+  sv.addi/ew=8 *vec_r_start, 0, 0
+\end{verbatim}
+
+The \texttt{.clear} section is only accessed if the result vector byte is to be cleared
+
+\begin{verbatim}
+.step:
+  svstep. 0, 1, 0
+  bdnz .lower_loop
+\end{verbatim}
+
+Here the current step of the \acrshort{SVP64} system is incremented using the
+\texttt{svstep} instruction. When all step values have been iterated through
+(0-15), then the conditional branch will fail, and the first lane of the result
+vector will be correctly shuffled.
+
+For now the upper half hasn't been written, however it would look pretty much
+identical, with the only difference being an offset of 16 in the \texttt{a}
+and \texttt{b} vectors. The simple way to do this is simply to define where
+the halfway register for \texttt{a} and \texttt{b} are, and duplicate
+the entire code above (but instead of \texttt{vec\_a\_start} use
+\texttt{vec\_a\_half}, etc.).
+However, REMAP's offset parameter could be used to write
+both lane shuffling parts in a shorter code snippet (the extra uses of the
+REMAP system would incur a hardware penalty (versus simply starting at a
+halfway register and computing without the REMAP system) however.
 
 \subsection{Movemask}
 
