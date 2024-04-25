@@ -34,7 +34,7 @@ string, regular-expression, and Machine Learning algorithms run optimally
 on \acrshort{SVP64}.
 
 The biggest difference between other vector extensions provided by Intel,
-ARM, etc., is that if we find \acrshort{SVP64} to be sub-optimal, an opportunity is
+\acrshort{ARM}, etc., is that if we find \acrshort{SVP64} to be sub-optimal, an opportunity is
 provided to us by \acrshort{NGI} Search to investigate how to actually improve the
 \acrshort{SVP64} extension to \acrshort{POWER} ISA.
 
@@ -52,7 +52,7 @@ benefit from increased performance, and reduced energy requirements.
   \acrshort{POWER} ISA version of the general \acrfull{SV} extension, initially
   developed by the Libre-SOC project with NLnet funding. This was the situation
   at the point of beginning the project, however subsequently Red Semiconductor
-  had switched to the RISC-V \acrshort{ISA} and are no longer using the
+  had switched to the \acrshort{RISC-V} \acrshort{ISA} and are no longer using the
   \acrshort{SV} and \acrshort{SVP64} codebase.
   Our new approach is to take the principles that lead to the development of
   \acrshort{SVP64} as our starting point for any hardware implementation.
@@ -128,7 +128,7 @@ The interview can be found
 \href{https://spaces.fundingbox.com/spaces/ngi-community-ngi-innovators/64b8dadbabf7a659885ee01e}{here}.
 
 Later, an audio recording was made to summarise the goals and progress of the
-project. The recording is avalable on the NGI Search website :
+project. The recording is avalable on the \acrshort{NGI} Search website :
 \href{https://www.ngisearch.eu/view/Events/OC1Searchers}{here}.
 
 \section{VectorCamp}
@@ -137,7 +137,7 @@ VectorCamp is the official maintainer of Vectorscan, a Portable Massively
 parallel \acrfull{regex} Matcher library. It is used extensively in
 Intrusion Detection Systems software (like Snort, Suricata and others)
 and Network Security Analysis in general. Originally the project was forked
-from Intel’s Hyperscan but attempts to port it to ARM (originally) were not
+from Intel’s Hyperscan but attempts to port it to \acrshort{ARM} (originally) were not
 accepted upstream. So a fork of Hyperscan was created in the form of
 Vectorscan, where portability is the main focus of the project.
 Now a few years later, and Vectorscan has become a popular project,
@@ -145,7 +145,8 @@ with many external contributions. It is currently heavily developed and
 continuously optimized and improved.
 
 At the time of writing it is ported
-to ARM and \acrshort{POWER} architectures. Particularly for ARM, Neon/ASIMD support
+to \acrshort{ARM} and \acrshort{POWER} architectures.
+Particularly for \acrshort{ARM}, Neon/\acrshort{ASIMD} support
 is 100\% while there is ongoing work to port the code to \acrshort{SVE2} and
 the same Fat Runtime functionality as on x86 is implemented,
 so that the same binary can run and take advantage of \acrshort{SVE2} if available.
