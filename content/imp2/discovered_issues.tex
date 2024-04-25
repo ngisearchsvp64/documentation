@@ -19,7 +19,7 @@
 
 The \acrshort{SVP64} implementation of \texttt{memchr} uses the vectorised branch
 conditional instruction, \texttt{sv.bc} in the \acrshort{SVP64} Vertical-First
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L67}{loop}.\\
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L67}{loop}.\\
 
 The instruction below is the Simple-V form of the normal \texttt{bc} instruction.
 It works by checking a single bit in the \acrfull{CR}
@@ -146,7 +146,7 @@ To find where the incorrect branch occurred, search for
 \texttt{9715a432c157d17} (in reverse order compared to memory print because of
 Big/Little-Endian conversion). The first occurance of this value is when
 the doubleword load \texttt{ld} is called. This corresponds to
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L64}{line \#64}
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/1afb94889b8ea2f85844e410f87e5a9b8e2e959f/svp64-port/svp64/memchr_svp64.s#L64}{line \#64}
 of the \texttt{memchr} SVP64 assembler.\\
 
 The instructions called after \texttt{ld} are:

@@ -49,14 +49,14 @@ Inside the result tests file for the occurance of
 \texttt{Wrong result in function}.
 The version of \texttt{strchr\_svp64} used for this example is in git commit
 \texttt{\#9378006a}. Simple-V implementation
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s}{strchr\_svp64.s}.
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s}{strchr\_svp64.s}.
 Three errors were found in the first group of tests,
 \begin{verbatim}
 do_test (0, 16 << i, MAX_SIZE, SMALL_CHAR, MIDDLE_CHAR);
 \end{verbatim}
 
 See,
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/test-strchr.c#L267}{test-strchr.c\#267}.
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/test-strchr.c#L267}.
 
 \section{Determining causes of errors}
 \label{subsec:determine_cause_err}
@@ -88,7 +88,7 @@ reg  8 fffffffffffffffe 00000000 00000000 00000000 00000000 ...
 \end{verbatim}
 
 Both wrapper and test C files were fixed to pass in a single byte, see
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/commit/8f1b25340ee2f108027a6f50e365d42aeb7cc939}{commit}.
+\href{https://github.com/ngisearchsvp64/glibc-svp64/commit/8f1b25340ee2f108027a6f50e365d42aeb7cc939}{commit}.
 
 \subsubsection{Wrong return value}
 
@@ -161,14 +161,14 @@ reg 16 289079624b349c17 614a339b846d563f 9a836c553e278f78 543d268e77604932 0
 
 The \texttt{mtspr} instruction corresponds to \texttt{mfspr}
 (an extended mnemonic) listing,
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s#L108}{line \#108},
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s#L108}{line \#108},
 of the assembly code.\\
 
 The correct behaviour is on a successful byte match (in this case
 matches \texttt{0x17} as expected) there should be a branch to line
 \texttt{\#108}, however the simulator jumps to the \texttt{subf}
 (assembly using \texttt{sub} extended mnemonic),
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/src/commit/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s#L112}{line \#112}.\\
+\href{https://github.com/ngisearchsvp64/glibc-svp64/blob/9378006a84bdef6af85eb0f810fb62fedc62c588/svp64-port/svp64/strchr_svp64.s#L112}{line \#112}.\\
 
 \label{subsubsec:wrong_val_man_addr}
 
@@ -243,4 +243,4 @@ Thus the \texttt{target\_address} parameter in \texttt{sv.bc}
 (last argument) needs to be changed to {0x14}.
 
 The code has been fixed in
-\href{https://git.vantosh.com/ngisearch/glibc-svp64/commit/2d2c0f70dc5cca10a1c5d92d726406903f9e5b23}{commit \#2d2c0f70}.
+\href{https://github.com/ngisearchsvp64/glibc-svp64/commit/2d2c0f70dc5cca10a1c5d92d726406903f9e5b23}.
