@@ -23,7 +23,7 @@ instead of Vertical-First}.\\
 
 (Sections similar to \texttt{memchr} are not covered in this section.)
 
-\subsection{\texttt{memrchr\_svp64.s} - SVP64 assembler implementation of \texttt{memrchr}}
+\subsection{\texttt{memrchr\_svp64.s} - \acrshort{SVP64} assembler implementation of \texttt{memrchr}}
 
 Source code for \texttt{memrchr\_svp64.s} can be found in the
 \texttt{glibc-svp64} repo, path is:
@@ -53,7 +53,7 @@ to start at N-1 (the last char of the string).
     \texttt{.found} (for both \texttt{memchr} and \texttt{memrchr}).
     \item Another adjustment to \texttt{in\_ptr} is needed (decrement pointer
     by 7) at the start of the function, because 8 bytes are being read at
-    a time in the SVP64 routine.
+    a time in the \acrshort{SVP64} routine.
     \item First store value of \acrshort{CTR} in \texttt{ctr}.
     Configure the \acrshort{CTR}. Additional \texttt{tmp} register stores
     \texttt{ctr+1} (needed to make sure the vectorised branch will loop
@@ -84,7 +84,7 @@ Comprises the inner loop of the SVP64 Horizontal-First algorithm.
 
 \subsubsection{Determine location}
 
-Use the current value of CTR to calculate which 8-byte block of chars contains
+Use the current value of \acrshort{CTR} to calculate which 8-byte block of chars contains
 the matching character. \texttt{in\_ptr} is adjusted accordingly.
 
 \subsubsection{Move forward by 7}

@@ -105,9 +105,9 @@ AssertionError: SelectableInt(value=0x0, bits=64) !=
                 SelectableInt(value=0x1, bits=64)
 \end{verbatim}
 
-And the reason for the incorrect CTR value, is because instead of the expected
-branch, another iteration of the Simple-V loop occurs, thus
-decrementing CTR to 0.
+And the reason for the incorrect \acrshort{CTR} value, is because instead of the expected
+branch, another iteration of the \acrfull{SV} loop occurs, thus
+decrementing \acrshort{CTR} to 0.
 
 To run the \texttt{memchr} tests:
 \begin{verbatim}
@@ -126,7 +126,7 @@ return val        : 0000000000000000
 ./test-memchr-svp64: Wrong result in function memchr_svp64 (nil) 0x7f2abc182020
 \end{verbatim}
 
-The returned value from the SVP64 implementation was 0, while the reference C
+The returned value from the \acrshort{SVP64} implementation was 0, while the reference C
 gave 0x7f2abc182020 (the correct result).\\
 
 Jump to the occurance of \texttt{Memory:} which occurred before the error
@@ -155,10 +155,10 @@ The instructions called after \texttt{ld} are:
   \item Compare bytes \texttt{sv.cmpb} (generates the mask \texttt{0xff}
         because \texttt{0x17} is the character to match for)
   \item Compare immediate \texttt{sv.cmpi} (sets bit 1 (GT), and clears
-        bit 2 (EQ), of CR Field 0)
-  \item Branch conditional (decrements CTR, tests for bit2=0, but
+        bit 2 (EQ), of \acrshort{CR} Field 0)
+  \item Branch conditional (decrements \acrshort{CTR}, tests for bit2=0, but
         doesn't branch)
-  \item Simple-V step \texttt{svstep} (branch was not taken,
+  \item \acrshort{SV} step \texttt{svstep} (branch was not taken,
         \textit{this shouldn't have happened})
 \end{itemize}
 

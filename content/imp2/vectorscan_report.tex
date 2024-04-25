@@ -69,7 +69,7 @@ Support for SIMDe is now officially in Vectorscan and it has been added as part 
 \href{https://buildbot-ci.vectorcamp.gr/#/grid}{Vectorscan CI pipeline}.
 \par
 
-\section{Vectorscan adaptation for SVP64}
+\section{Vectorscan adaptation for \acrshort{SVP64}}
 
 This is actually the harder part as it would need extensive refactoring of the whole codebase of Vectorscan.
 Thankfully we do not have to do that, as after extensive analysis of the codebase we found that we can keep the same \acrshort{SIMD}-friendly algorithms
@@ -111,7 +111,7 @@ ENDIF
 
 In some cases, the check for smaller sizes and the check for alignment can be merged, but the principle remains the same.
 Now the benefit of a system like \acrshort{SVP64} is that you can skip the Head and Tail parts of the algorithm and just have a main loop.
-However, the changes to a software like Vectorscan would have to be enormous, as it's completely tailored around SIMD architectures.
+However, the changes to a software like Vectorscan would have to be enormous, as it's completely tailored around \acrshort{SIMD} architectures.
 However, \acrshort{SVP64} as well as at least two modern \acrshort{SIMD} architectures,
 \acrshort{SVE}/\acrshort{SVE2} and \acrshort{AVX512} support the notion of predicated/masked loads.
 In masked loads, we can use predicate masks to load a full vector on one hand until the aligned boundary,
@@ -132,15 +132,15 @@ to ensure that performance will not be severely impacted
 by the decisions made. \par
 
 Fortunately Simple-V is designed with such portability in mind. Just like
-with Cray Vectors, ARM SVE/2, and RISC-V Vectors, Scalable Vector Loops
+with Cray Vectors, \acrshort{ARM} SVE/2, and \acrfull{RVV}, Scalable Vector Loops
 may be written once, treating the assembler as if it was more
 akin to an Architecturally-independent and stable "Software API".
 With Scalable Vectors, Programmers can be confident
 that binary applications written years ago will not need any changes
 to be faster or more power-efficient on future hardware. This is a very
-different situation from SIMD ISAs which directly expose the
-underlying SIMD hardware to the programmer, where the routine addition
-of new instructions to such SIMD ISAs is inherently guaranteed to require
+different situation from \acrshort{SIMD} \acrshort{ISA}s which directly expose the
+underlying \acrshort{SIMD} hardware to the programmer, where the routine addition
+of new instructions to such \acrshort{SIMD} \acrshort{ISA}s is inherently guaranteed to require
 a full assembly-level review and rewrite of the software. \par
 
 Now that we have explained the changes involved, we will mention that we have changed Noodle to provide two separate code paths,

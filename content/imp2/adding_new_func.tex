@@ -4,7 +4,7 @@
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
 
-\chapter{Guide to New SVP64 Implementation of a glibc Function}
+\chapter{Guide to New \acrshort{SVP64} Implementation of a glibc Function}
 \label{sec:adding_new_func}
 
 The directory of the glibc repo is the same as for initial environment setup:
@@ -101,8 +101,8 @@ printf("strchr called: s: %p, c: %02x(%c)\n", s, (uint8_t)c, c);
 \subsection{\texttt{[function]\_wrapper.c}}
 
 Create a new \texttt{strchr\_wrapper.c} C file which will interface with
-the glibc tests and access the ISACaller PowerISA+SVP64 simulator. An existing
-\texttt{[function]\_wrapper.c} file can be used (in this example,
+the glibc tests and access the ISACaller PowerISA+\acrshort{SVP64} simulator.
+An existing \texttt{[function]\_wrapper.c} file can be used (in this example,
 \texttt{memchr}):
 
 \begin{verbatim}
@@ -183,12 +183,12 @@ Append \texttt{\$(strchr\_TARGET)} to the line under the \texttt{remove} make ru
 
 \subsection{\texttt{[function]\_svp64.s} assembler file}
 
-This file can be started by copying from existing SVP64 function, or by using
-the generated assembler using the reference implementation
+This file can be started by copying from existing \acrshort{SVP64} function,
+or by using the generated assembler using the reference implementation
 (\texttt{[function]\_orig\_ppc64.s}), although the generated assembler is
 probably more difficult to follow than simply writing from scratch.\\
 
-If copying from the \texttt{memchr} SVP64 assembler:
+If copying from the \texttt{memchr} \acrshort{SVP64} assembler:
 \begin{verbatim}
 (glibc-svp64)$: cp ~/src/glibc-svp64/svp64-port/svp64/memchr_svp64.s \\
                 ~/src/glibc-svp64/svp64-port/svp64/strchr_svp64.s

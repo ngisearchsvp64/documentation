@@ -31,8 +31,8 @@ This standard C library was one of the basis, inspiration for Picolibc \ref{cont
 \label{content:picolibc}
 
 This is a standard C library designed for smaller embedded devices with limited space.
-Picolibc has been used on ARM based processors and on RISC-V process, recently PowerISA support was added.
-Therefor a good candidate for use by SVP64, however it lacks good \acrfull{LE} support as it was based upon the PowerPC spec being \acrfull{BE}.
+Picolibc has been used on \acrshort{ARM} based processors and on \acrshort{RISC-V} process, recently PowerISA support was added.
+Therefor a good candidate for use by \acrshort{SVP64}, however it lacks good \acrfull{LE} support as it was based upon the PowerPC spec being \acrfull{BE}.
 Adding full support for \acrfull{LE} is beyond the scope of this project and therefor this library was considered to be difficult to use.
 We therefor did not perform any tests or practical usage of Picolibc.
 \par
@@ -45,7 +45,7 @@ the eventual usage would still be limited to embedded devices, and not general p
 
 dietlibc is another standard C library designed for devices on a diet, again targeting embedded devices.
 This standard library also support the PowerISA architecture, again from a PowerPC bases however it has full \acrfull{LE} support.
-This means that adding SVP64 would be easier as most of the basic instruction are already present.
+This means that adding \acrshort{SVP64} would be easier as most of the basic instruction are already present.
 As a performance test, using the standard test suite, performed very poorly with string searches at round about 1 second.
 In an exploration stage of looking to optimise these patterns and tests, we tried several changes to basic patters,
 which turned out to reduce speed even more and this both on larger and smaller device bases.
@@ -69,7 +69,7 @@ No real in-depth investigation was preformed beyond some basic checks.
 Bionic is a standard C library used on Android, while the PowerISA support is not official by Google and not available under the open source project.
 We evaluated the current open source implementation, however it lacks any possiblity to provide larger memory allocations
 and will perform worse on larger memory devices,
-As this standard C library takes a lot of inspiration from the BSD libc, by implementing OpenBSD and FreeBSD standard C concepts,
+As this standard C library takes a lot of inspiration from the \acrshort{BSD} libc, by implementing OpenBSD and FreeBSD standard C concepts,
 the project dismissed this standard C library.
 \par
 
@@ -96,11 +96,11 @@ Buildroot
 \ldots
 \end{itemize}
 
-\section{BSD libc}
+\section{\acrshort{BSD} libc}
 
-The BSD libc standard C library is a default C library for OpenBSD, FreeBSD, NetBSD, and macOS.
-As this library originates from the original 4.4BSD, it targets BSD based platforms.
-For this project we are looking primarly to Linux based platforms as support for PowerISA on BSD is not at the same level.
+The \acrshort{BSD} libc standard C library is a default C library for OpenBSD, FreeBSD, NetBSD, and macOS.
+As this library originates from the original 4.4BSD, it targets \acrshort{BSD} based platforms.
+For this project we are looking primarly to Linux based platforms as support for PowerISA on \acrshort{BSD} is not at the same level.
 However this standard C library is very efficient and fast, and was only dismissed due to the scope of this project.
 \par
 
@@ -131,5 +131,5 @@ when performance and ease of usage are considered.
 \par
 
 This standard C library is \acrshort{LSB} compliant and supported by Debian, PowerEL, Fedora, RHEL, OpenSuSE, SLES, Gentoo
-and several other Linux distributions of which PowerISA compliant processors are supported, including patched binutils to enable SVP64.
+and several other Linux distributions of which PowerISA compliant processors are supported, including patched binutils to enable \acrshort{SVP64}.
 \par
