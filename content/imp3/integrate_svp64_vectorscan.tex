@@ -5,11 +5,11 @@
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
-\section{Integrating SVP64 into Vectorscan}
+\section{Integrating \acrshort{SVP64} into Vectorscan}
 
-Vectorscan has a large codebase, and it heavily depends on SIMD intrinsics from
-ARM, Intel, PowerISA, etc., so VectorCamp decided on implementing some common
-SIMD functions using SVP64. These would then be integrated into a separate
+Vectorscan has a large codebase, and it heavily depends on \acrshort{SIMD} intrinsics from
+\acrshort{ARM}, Intel, PowerISA, etc., so VectorCamp decided on implementing some common
+\acrshort{SIMD} functions using \acrshort{SVP64}. These would then be integrated into a separate
 branch of Vectorscan.
 
 VectorCamp began with including the \texttt{pypowersim} (wrapper for the
@@ -19,10 +19,10 @@ simulator, which can be difficult given Vectorscan's dependencies on later
 versions of C++ (which are not so easily available with the version of Debian
 used for the chroot).
 
-Commits covering the changes done to Vectorscan to support SVP64 are available
+Commits covering the changes done to Vectorscan to support \acrshort{SVP64} are available
 \href{https://github.com/ngisearchsvp64/vectorscan/commits/feature/svp64-port/}{here}.
 
 \subsection{Setup script}
-The shell script for getting the Vectorscan SVP64 test running can be found
+The shell script for getting the Vectorscan \acrshort{SVP64} test running can be found
 \href{https://github.com/ngisearchsvp64/shell-scripts/blob/main/scripts/ngi-search-vectorscan}{here}.
 

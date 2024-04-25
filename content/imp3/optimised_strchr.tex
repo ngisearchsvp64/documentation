@@ -40,11 +40,11 @@ only the additional code which calculates the length of the string will be shown
 
 After this code, \texttt{memchr} code is used as before as the length
 \texttt{n} is now known.
-This code is also similar to the main SVP64 code of \texttt{memchr}, except here
-the loaded byte is compared against the immediate \texttt{0x00},
+This code is also similar to the main \acrshort{SVP64} code of \texttt{memchr},
+except here the loaded byte is compared against the immediate \texttt{0x00},
 or a \texttt{NULL} (character used to terminate strings in C).
 
 Vectorised Conditional Branch \texttt{sv.bc} mode \texttt{BO=4} didn't work,
 so the example code is limited to strings of length specified in Register 5
-(as this register specifies the value of the Count Register used to keep track
+(as this register specifies the value of the \acrfull{CTR} used to keep track
 of max loop iterations).

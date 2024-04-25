@@ -5,7 +5,7 @@
 %
 % Funded by NGI Search Programme HORIZON-CL4-2021-HUMAN-01 2022,
 % https://www.ngisearch.eu/, EU Programme 101069364.
-\section{Exploring Several Important SIMD Operations}
+\section{Exploring Several Important \acrshort{SIMD} Operations}
 \subsection{Vector Permute - \texttt{vperm}}
 
 A very useful operation present in PowerISA as part of the
@@ -37,9 +37,9 @@ The third operand, \texttt{vec3} is used to determine whether an element from
 No re-arrangement happens (not a shuffle) and in hardware, this might be
 implemented as 16 2-in 1-out byte multiplexers.
 
-\subsubsection{SVP64 Draft Implementation}
+\subsubsection{\acrshort{SVP64} Draft Implementation}
 
-An SVP64 implementation for this operation can be found
+An \acrshort{SVP64} implementation for this operation can be found
 \href{https://github.com/ngisearchsvp64/glibc-svp64/blob/master/svp64-port/svp64/vperm_svp64.s}{here}.
 
 The main assembler portion is this:

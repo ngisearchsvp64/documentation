@@ -62,7 +62,7 @@ there's no array).
 mtspr 9, 5 # move r5 to CTR
 \end{verbatim}
 Load the length of the byte array from integer register 5 into
-the Count Register (CTR), which is used to keep track of loop iterations
+the \acrfull{CTR}, which is used to keep track of loop iterations
 (standard use in PowerISA).
 
 \begin{verbatim}
@@ -83,7 +83,7 @@ used to check if no match occurred. This end address is stored in register 7.
   # test CTR, stop if any cmp failed
   sv.bc/all 0, *2, .inner # -0x10
 \end{verbatim}
-This is the main bit of SVP64 code (running in Horizontal-First mode).
+This is the main bit of \acrshort{SVP64} code (running in Horizontal-First mode).
 The snippet of code will iterate 4 times as specified by immediate
 in \texttt{setvl} (checking one byte with each iteration).
 Load byte from memory at address stored in register 3.
@@ -93,17 +93,17 @@ the address stored in register 3 with the specified offset (+1 in this case).
 The compare instruction will check the loaded byte with the specified char
 (stored in register 4).
 
-A special mode of Simple-V called Data-Dependent Fail First (FF) is used with
-the compare instruction. FF works by checking given data, and truncating the
-Vector Length (VL) if the condition is met. The condition here is that
+A special mode of \acrfull{SV} called \acrfull{FF} is used with
+the compare instruction. \acrshort{FF} works by checking given data, and truncating the
+\acrfull{VL} if the condition is met. The condition here is that
 loaded byte is equal (\texttt{ff=eq}) to the specified byte in register 4.
-The additional VL inclusive (\texttt{vli}) option ensures the vector is
+The additional \acrshort{VL} inclusive (\texttt{vli}) option ensures the vector is
 truncated at the matched byte (since it needs its address is what's required
 from \texttt{memchr}).
 
 The conditional branch (\texttt{sv.bc}) in \texttt{BO=0} mode will decrement
-CTR, then branch only if CTR is non-zero (haven't finished searching the
-byte array), \textit{and} the Condition Field 0 bit 2 (EQ) is cleared
+\acrshort{CTR}, then branch only if \acrshort{CTR} is non-zero (haven't finished searching the
+byte array), \textit{and} the \acrfull{CR} Field 0 bit 2 (EQ) is cleared
 (not matching character). For more information on branch instructions,
 see Book I, Section 2.4 of the PowerISA specification.
 
@@ -128,11 +128,11 @@ add 3,3,6
 b .end # 0x8
 \end{verbatim}
 
-When a match occurs, VL will be truncated to a value between 0 and 3 (since VL
-was set to 4 earlier), and for this to be converted to a final match address,
-some arithmetic needs to be done.
+When a match occurs, \acrshort{VL} will be truncated to a value between 0 and 3
+(since \acrshort{VL} was set to 4 earlier), and for this to be converted to a
+final match address, some arithmetic needs to be done.
 
-The current VL value is stored in a temporary register 6. Adding it to a
+The current \acrshort{VL} value is stored in a temporary register 6. Adding it to a
 precomputed offset and the current address will produce the correct address
 value at register 3.
 
@@ -148,14 +148,14 @@ value at register 3.
 In the case of a no match, register 3 is cleared (return address set to null)
 before being returned.
 
-The main difference between the implementation described in IMP2 and the one
-shown above, is that to use the more advanced features of SVP64, one has to
-think more in terms of C-like code (one element at a time),
-as opposed to SIMD (blocks of power-of-2 elements). The initial
+The main difference between the implementation described in \acrshort{IMP}2
+and the one shown above, is that to use the more advanced features of
+\acrshort{SVP64}, one has to think more in terms of C-like code (one element at a time),
+as opposed to \acrshort{SIMD} (blocks of power-of-2 elements). The initial
 implementation processed the byte in chunks of 8-bytes (by loading 8 bytes
 from memory into a single 64-bit register), which then required a further
 sub-search once a match had been detected.
 
 Although the code size is indeed smaller, the actual throughput (number of
 bytes checked per second etc.) is dependent on whether the underlying hardware
-supporting SVP64 can recognise the above algorithm and run it in parallel.
+supporting \acrshort{SVP64} can recognise the above algorithm and run it in parallel.
