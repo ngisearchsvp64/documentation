@@ -1,6 +1,6 @@
 \chapter{Commentary and Conclusions}
 
-The \textbf{\acrshort{SVP64} \acrshort{POWER} ISA Vector Optimisation for Search}
+The \textbf{\acrshort{SVP64} \acrshort{POWER} \acrshort{ISA} Vector Optimisation for Search}
 project was conceived by RED Semiconductor, VectorCamp and VanTosh to build on
 a body of previously published open-source development work that had proposed
 extensions to the OpenPOWER \acrfull{ISA} that would make it more powerful and
@@ -34,10 +34,10 @@ The combination of RED’s expertise in hardware, VectorCamp’s in software and
 VanTosh’s in IT ecosystems makes the consortium ideally placed for research and
 development into new optimised solutions for internet search, and the three
 organisations have previously been involved in projects concerning
-\acrshort{SVP64} and \acrshort{POWER} ISA.
+\acrshort{SVP64} and \acrshort{POWER} \acrshort{ISA}.
 
 Key objectives of the
-\textbf{\acrshort{SVP64} \acrshort{POWER} ISA Vector Optimisation for Search}
+\textbf{\acrshort{SVP64} \acrshort{POWER} \acrshort{ISA} Vector Optimisation for Search}
 project, undertaken by the consortium of RED, VectorCamp, and VanTosh
 has had the following objectives:
 
@@ -79,20 +79,20 @@ developer understands the set of features it contains, and how to use it.
 To demonstrate search pattern algorithms using \acrshort{SVP64}, it was decided
 to integrate code written in this extension into the \texttt{glibc}
 test framework.
-Although the present state of SVP64's development and maturity has enabled RED,
+Although the present state of \acrshort{SVP64}'s development and maturity has enabled RED,
 VectorCamp and VanTosh to undertake specific algorithm code developments for
 evaluation and demonstration purposes, this project has taught us that
 \acrshort{SV} still requires further development to make is a practicable
-extension to the POWER ISA. Moreover, in order to realise the benefits of SVP64
-in a real-world environment, its ISA-based features require hardware
+extension to the \acrshort{POWER} \acrshort{ISA}. Moreover, in order to realise the benefits of \acrshort{SVP64}
+in a real-world environment, its \acrshort{ISA}-based features require hardware
 developments to the microprocessor architecture.
 
 \section{A Hardware Perspective by Red Semiconductor}
 
-Red Semiconductor has concluded from this project that SVP64 has reached a
+Red Semiconductor has concluded from this project that \acrshort{SVP64} has reached a
 stage of its development where hardware realisation must be carefully
 considered. Research undertaken during this project has revealed that whereas
-certain SVP64 features can be implemented in a straightforward manner, there
+certain \acrshort{SVP64} features can be implemented in a straightforward manner, there
 are many that require investigation by chip architects with microprocessor
 design expertise in order to specify and implement their functionality.
 
@@ -103,9 +103,9 @@ balancing the overall performance benefits with practical issues like the
 complexity of the hardware needed, and its cost in silicon area and power
 consumption when compared with other ISAs and Microprocessor chips.
 
-Many advanced features of SVP64, such as the REMAP system, fail-first,
+Many advanced features of \acrshort{SVP64}, such as the REMAP system, fail-first,
 predication, element-width overrides etc., are currently difficult to use
-due to the fact that the reference simulator for the SVP64 specification is
+due to the fact that the reference simulator for the \acrshort{SVP64} specification is
 still in the experimental phase of its development, and during this project the
 code writers discovered that its functionality, and doesn't always align with
 the available documentation.
@@ -129,10 +129,10 @@ extension, regardless of how performant it may be.
 
 Instead, it is better to gradually upgrade parts of the code (just as is
 happening today with the Rust programming language), by substituting specific
-vector extension (AVX, NEON, etc.) functions with optimised SVP64 code instead.
+vector extension (\acrshort{AVX}, NEON, etc.) functions with optimised \acrshort{SVP64} code instead.
 
 This is why during Milestone 3, we went through the exercise of researching
-common SIMD operations, and implementing them in SVP64. By having
+common \acrshort{SIMD} operations, and implementing them in \acrshort{SVP64}. By having
 implementations of standard operations (such as shuffle, movemask, etc.)
 gradual refactoring can be accomplished in the future.
 
@@ -143,40 +143,40 @@ turned to be either much bigger than desired, or only partially implemented.
 
 \section{An ISA \& Distribution Perspective by VanTosh}
 
-After understanding SVP64 much better, it is apparent that the extension has
+After understanding \acrshort{SVP64} much better, it is apparent that the extension has
 the possiblity to introduce new concepts to the \acrshort{POWER} \acrshort{ISA},
-however the disadvantages outway the advantages, while we have been able to
-reduce the number of instructions, the legiability of code and the maintanability
+however the disadvantages outweigh the advantages, while we have been able to
+reduce the number of instructions, the legibility of code and the maintainability
 becomes much more complex.
 After careful consideration there are simpler ways to achieve several optimizations
-SVP64 highlights and that can be added to the \acrshort{POWER} \acrshort{ISA},
+\acrshort{SVP64} highlights and that can be added to the \acrshort{POWER} \acrshort{ISA},
 such as Vector Element Move, Mask or Shift.
 
 From a higher software ecosystem, without operating system support or library support
-SVP64, as suggested in \label{sec:vecotorscansoftwareperspective} by VectorCamp,
+\acrshort{SVP64}, as suggested in \label{sec:vecotorscansoftwareperspective} by VectorCamp,
 would be cumbersome to convert and would be useless.
-In our previous efforts to get Linux Distribution support to SVP64, our effort to
+In our previous efforts to get Linux Distribution support to \acrshort{SVP64}, our effort to
 get a minimal \acrshort{POWER} architecture ``ppc64sffs" running, we were able
 to get the base system supported for \href{https://www.powerel.org}{PowerEL},
 \href{https://www.debian.org}{Debian}, and \href{https://gentoo.org}{Gentoo}.
 However we never were able to verify the \acrshort{POWER} \acrfull{SFFS}
-The benefit of adding SVP64 never got proven in detail and while this project
+The benefit of adding \acrshort{SVP64} never got proven in detail and while this project
 has been able to prove a better cycle usage to reduce the number of instruction
 cycles, it does not yet prove the increase of speed that would be inferred.
 
 \section{Future Work}
 
 This project has been the first attempt by attempt by multiple organisations
-to utilise the capabilities embodied in the SVP64 concept in real-world
+to utilise the capabilities embodied in the \acrshort{SVP64} concept in real-world
 applications, and much has been learnt about the innovative features as well
-as the challenges and limitations of applying SVP64 to existing
+as the challenges and limitations of applying \acrshort{SVP64} to existing
 coding methodology and applications.
 
 Based on the experience of the consortium, Red has learned enough to move from
 the purely theoretical towards a real functional HW specification
 and implementation.
 In practice, this has caused us to have a fundamental rethink of the concepts
-realised in SVP64, and has led to us going back to the original theoretical
+realised in \acrshort{SVP64}, and has led to us going back to the original theoretical
 ideas that inspired its development in order to develop a practicable hardware
 solution, which will differ from \acrshort{SV}, in order to deliver
 advanced functionality that is required by developers of systems for next
@@ -184,20 +184,20 @@ generation internet search and infrastructure projects where key driving force
 is likely to include the use of AI for optimised search, and cryptography to
 maintain users' privacy and security of data.
 
-The NGI Search collaborative project has proved to be a successful knowledge
+The \acrshort{NGI} Search collaborative project has proved to be a successful knowledge
 platform for the contributors, and has started to make connections between the
-deep research history behind the SVP64 concept and its potential use in
+deep research history behind the \acrshort{SVP64} concept and its potential use in
 real-world applications. The teams have experienced the challenges associated
 with moving the excellent theoretical concepts previously demonstrated in
 isolated code snippets into the realm of practical usage within large code
 bases comprising many complex algorithms. The project has reinforced the
-inspirations behind SVP64 and it raison d’être, while exposing the challenges
-associated with its applicability to the POWER ISA, and its ease of use when
+inspirations behind \acrshort{SVP64} and it raison d’être, while exposing the challenges
+associated with its applicability to the \acrshort{POWER} \acrshort{ISA}, and its ease of use when
 integrating with traditional coding methodologies. The collaborators have
 already considered future development work, including the alignment of future
-ISA extensions with pre-existing performance-boosting methodologies like SIMD,
+\acrshort{ISA} extensions with pre-existing performance-boosting methodologies like \acrshort{SIMD},
 and how a hardware architecture can then be implemented to optimise for the
-performance benefits that can be obtained from the modified ISA.
+performance benefits that can be obtained from the modified \acrshort{ISA}.
 
 It is highly likely that the members of this project will collaborate on future
 developments and seek grant funding where appropriate. The teams also hope that
