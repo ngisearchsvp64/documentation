@@ -45,6 +45,6 @@ except here the loaded byte is compared against the immediate \texttt{0x00},
 or a \texttt{NULL} (character used to terminate strings in C).
 
 Vectorised Conditional Branch \texttt{sv.bc} mode \texttt{BO=4} didn't work,
-so the example code is limited to strings of length specified in Register 5
+so the example code is limited to strings of length specified in \acrshort{GPR} \#5
 (as this register specifies the value of the \acrfull{CTR} used to keep track
 of max loop iterations).

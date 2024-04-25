@@ -51,7 +51,7 @@ be discussed
   add 7,3,5 # (start address+len-1)
   addi 7,7,-1 # Now points to last address of array s
 \end{verbatim}
-Register 7 is stores the current address to load from. As \texttt{memrchr}
+\acrshort{GPR} \#7 is stores the current address to load from. As \texttt{memrchr}
 begins from the last byte of array, the number of bytes \texttt{n} needs to be
 added. However since addresses begin from 0, 1 must be subtracted to get the
 last byte.
@@ -78,7 +78,7 @@ cmp 0,1,7,3
 bc 12, 0, 0x14 # check LT bit, if set, branch
 \end{verbatim}
 
-Compare the current address at register 7 with the starting address.
+Compare the current address at \acrshort{GPR} \#7 with the starting address.
 If the current address is smaller (less than,
 LT Condition Register field bit 0), that means no match occurred.
 In such a case jump to \texttt{.no\_match}.
@@ -93,5 +93,6 @@ add 3,7,6
 b .end # 0x8
 \end{verbatim}
 This snippet of code is similar except for the offset (since the bytes are
-being accessed in reverse). Also the current address is in Register 7, not 3.
+being accessed in reverse).
+Also the current address is in \acrshort{GPR} \#7, not \#3.
 
