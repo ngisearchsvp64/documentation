@@ -42,7 +42,7 @@ svp64-port/memchr_wrapper.c
 This wrapper file defines a wrapper function \texttt{MEMCHR\_SVP64()} with the
 same input arguments as standard \texttt{memchr()}, but also includes
 register setup and call to \texttt{pypowersim} which will run
-LibreSOC's \texttt{ISACaller} simulator only for
+Libre-SOC's \texttt{ISACaller} simulator only for
 the \acrshort{SVP64} \texttt{memchr} implementation.\\
 
 The string to be tested is copied from the native C address space, to the
