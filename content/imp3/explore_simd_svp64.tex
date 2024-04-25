@@ -100,11 +100,44 @@ With each lane the following happens:
 The difference with the second lane is that an offset of 16 is added (since
 each lane can \textit{only} access its own elements).
 
-\subsubsection{SVP64 Draft Implementation}
+\subsubsection{\acrshort{SVP64} Draft Implementation}
+
+The implementation shown below is not fully working due to time constraints.
+Also, only the lower half the bytes in the shuffle is done.
+
+\begin{verbatim}
+  setvl 1, 0, 32, 0, 1, 0 # Horizontal-First mode
+  # Create temp where only lower nibble of each element in b set.
+  sv.andi/ew=8 *temp1_start, *vec_b_start, 0x0f
+  mtspr 9, 16 # 32*8-bit elements, but only working on half
+  # Check if upper bit set, then clear result element if so
+  setvl 1, 0, 16, 0, 1, 1 # Vertical-First mode
+.lower_loop:
+  sv.andi/ew=8 *temp2_start, vec_b_start, 0x80
+  sv.cmpi/ew=8 cr0, 1, *vec_b_start, 0x80
+  #TODO: branch if b[i]==0x80
+  sv.bc 12, 2, .clear",
+  # Enable REMAP on operand RA,
+  # ew=8 (0b11), mm=0, sk=0
+  svindex "%d, 0b10000, 4, 3, 0, 0" % (vec_b_start>>2)
+  sv.addi/ew=8 *vec_r_start, *vec_b_start, 0
+  b .step
+.clear:
+  sv.addi *vec_r_start, 0, 0
+.step:
+  svstep. 0, 1, 0
+  bdnz .lower_loop
+  # upper half TODO
+\end{verbatim}
+
+The snippet above requires the Element Width Override functionality of
+\acrshort{SVP64} in order to operate on individual bytes contained
+in the vector to be shuffled.
 
 \subsection{Movemask}
 
-An instruction from Intel AVX, which creates a bit mask from a source vector.
+An instruction from Intel \acrshort{AVX}, which creates a bit mask from a
+source vector.
 
 \begin{verbatim}
 # Operates on 32*8 (256-bit) value
